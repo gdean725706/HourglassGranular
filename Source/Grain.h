@@ -33,6 +33,7 @@ class Grain
 	int m_lifeTimeSamples, m_timeAliveSamples;
 	float m_startPosition, m_currentOutput, m_gain, m_blendAmount;
 	float m_panning;
+	float m_pitch;
 
 	WindowShapes m_windows;
 
@@ -48,7 +49,8 @@ public:
 		m_phasor(44100),
 		m_gain(0.3f),
 		m_blendAmount(0.0f),
-		m_panning(0.5f)
+		m_panning(0.5f),
+		m_pitch(1.0f)
 	{
 		m_hannWindow = 0;
 		m_triWindow = 0;
@@ -87,7 +89,8 @@ public:
 		float rPitch = rng * randomPitch;
 		m_panning = rng * panningRandomness;
 		
-		m_phasor.setFrequency(pitch + rPitch);
+		m_pitch = pitch + rPitch;
+		m_phasor.setFrequency(m_pitch);
 
 		if (audio != nullptr && hann != nullptr)
 		{
@@ -121,6 +124,12 @@ public:
 		++grainNum;
 
 		DBG(grainNum);*/
+	}
+
+	void updatePitch(float p)
+	{
+		m_pitch = p;
+		m_phasor.setFrequency(m_pitch);
 	}
 
 	void process(float* left, float* right, int position)
@@ -157,8 +166,6 @@ public:
 		{
 			amp = 1.0f;
 		}
-
-
 
 		m_currentOutput = m_audio->getSample(m_startPosition + float(m_phasor.getPhase() * m_audio->getSize())) * amp;
 		m_phasor.tick();

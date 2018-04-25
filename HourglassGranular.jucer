@@ -16,6 +16,8 @@
   <MAINGROUP id="YfQrpo" name="HourglassGranular">
     <GROUP id="{773F1AFC-5E5D-8FDE-533E-5A8BFAA76DD6}" name="Source">
       <GROUP id="{9EB83F55-9703-7AFA-2D2B-E0DB56F4459D}" name="Audio">
+        <FILE id="UPED3p" name="EnvelopeGenerator.h" compile="0" resource="0"
+              file="Source/EnvelopeGenerator.h"/>
         <FILE id="l4EUnS" name="Grain.h" compile="0" resource="0" file="Source/Grain.h"/>
         <FILE id="T5mEUa" name="GrainTable.h" compile="0" resource="0" file="Source/GrainTable.h"/>
         <FILE id="BotaZs" name="JuicyClouds.cpp" compile="1" resource="0" file="Source/JuicyClouds.cpp"/>

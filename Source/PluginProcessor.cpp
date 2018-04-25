@@ -15,17 +15,21 @@
 //==============================================================================
 HourglassGranularAudioProcessor::HourglassGranularAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
-                     #endif
-                       )
+	: AudioProcessor(BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+		.withInput("Input", AudioChannelSet::stereo(), true)
 #endif
+		.withOutput("Output", AudioChannelSet::stereo(), true)
+#endif
+	),
+#endif
+	m_ampEnv(44100.0f, 0.0f, 1.0f, 1.0f, 1.0f)
 {
-
+	m_ampEnv.setAttack(0.01f);
+	m_ampEnv.setDecay(0.1f);
+	m_ampEnv.setRelease(0.1f);
+	m_ampEnv.setSustain(1.0f);
 }
 
 HourglassGranularAudioProcessor::~HourglassGranularAudioProcessor()
@@ -98,6 +102,7 @@ void HourglassGranularAudioProcessor::changeProgramName (int index, const String
 void HourglassGranularAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	m_clouds.setSampleRate(sampleRate);
+	m_ampEnv.setSampleRate(sampleRate);
 }
 
 void HourglassGranularAudioProcessor::releaseResources()
@@ -139,7 +144,37 @@ void HourglassGranularAudioProcessor::processBlock (AudioSampleBuffer& buffer, M
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+	MidiMessage msg;
+	int time = 0;
+	for (MidiBuffer::Iterator it(midiMessages); it.getNextEvent(msg, time); ) 
+	{
+		if (msg.isNoteOn())
+		{
+			m_ampEnv.trigger();
+
+			int midiNote = msg.getNoteNumber();
+			m_clouds.setGrainPitch(midiNote);
+
+		}
+		else if (msg.isNoteOff()) 
+		{
+			m_ampEnv.release();
+		}
+	}
+
 	m_clouds.process(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
+	
+	return;
+
+	for (int n = 0; n < buffer.getNumSamples(); ++n)
+	{
+		float* left = buffer.getWritePointer(0);
+		float *right = buffer.getWritePointer(1);
+		
+		left[n] *= m_ampEnv.getValue();
+		right[n] *= m_ampEnv.getValue();
+	}
+
 }
 
 //==============================================================================

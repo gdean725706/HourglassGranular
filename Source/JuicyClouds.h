@@ -35,6 +35,7 @@ class JuicyClouds
 
 	float m_bpm;
 	float m_division;
+	float m_pitchOffset;
 
 public:
 	JuicyClouds(float sampleRate = 44100.0f);
@@ -59,4 +60,6 @@ public:
 	void calculateSamplesPerStep();
 	void setBPM(float bpm);
 	void setDivision(float div);
+
+	void setGrainPitch(float midiValue);
 };

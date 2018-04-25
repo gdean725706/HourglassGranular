@@ -30,14 +30,15 @@ JuicyClouds::JuicyClouds(float sampleRate)
 	m_blendAmount(0),
 	m_panningRandomness(0),
 	m_bpm(120.0f),
-	m_division(1)
+	m_division(1),
+	m_pitchOffset(0)
 {
 	//m_windowTable.printData();
 	m_audioTable.fillSine(440);
 	m_triwTable.fillTriangleWindow();
 	m_sineTable.fillSineWindow();
 	m_playbackPhasor.setFrequency(0.01);
-	calculatePhasorSpeed();
+	setGrainPitch(1);
 	calculateSamplesPerStep();
 
 }
@@ -80,7 +81,7 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 							m_sampleRate,
 							m_sampleRate * m_grainSizeMultiplier, // duration samples
 							start, //m_playbackPhasor.getPhase() * m_audioTable.getSize() , // start position (phasor this?)
-							m_phasorSpeed + m_masterPitch, // pitch
+							m_masterPitch + m_pitchOffset, // pitch
 							m_startRandomness, // random start amount
 							m_pitchRandomness,// random pitch amount
 							0.3f, // Gain
@@ -97,6 +98,7 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 			{
 				if (m_childGrains[child].alive() == true)
 				{
+					m_childGrains[child].updatePitch(m_phasorSpeed + m_masterPitch);
 					m_childGrains[child].process(leftChannel, rightChannel, n);
 				}
 				m_playbackPhasor.tick();
@@ -150,7 +152,7 @@ void JuicyClouds::setStartRandomness(float amount)
 
 void JuicyClouds::setPitch(float pitch)
 {
-	m_masterPitch = pitch;
+	m_pitchOffset = pitch;
 }
 
 void JuicyClouds::setWindowBlendAmount(float amount)
@@ -179,4 +181,14 @@ void JuicyClouds::setDivision(float div)
 {
 	m_division = div;
 	calculateSamplesPerStep();
+}
+
+void JuicyClouds::setGrainPitch(float midiValue)
+{
+	float phasorSpeed = m_sampleRate / m_audioTable.getSize();
+
+	phasorSpeed *= exp2f((midiValue - 69) / 11);
+
+	m_masterPitch = phasorSpeed;
+
 }

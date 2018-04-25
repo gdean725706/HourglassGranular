@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "JuicyClouds.h"
+#include "EnvelopeGenerator.h"
 
 
 //==============================================================================
@@ -59,8 +60,12 @@ public:
 
 	JuicyClouds* getGranularProcessor();
 
+
 private:
 	JuicyClouds m_clouds;
-    //==============================================================================
+
+	EnvelopeGenerator m_ampEnv;
+
+	//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HourglassGranularAudioProcessor)
 };
