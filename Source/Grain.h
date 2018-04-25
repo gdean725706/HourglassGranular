@@ -32,6 +32,7 @@ class Grain
 	bool m_alive, m_running;
 	int m_lifeTimeSamples, m_timeAliveSamples;
 	float m_startPosition, m_currentOutput, m_gain, m_blendAmount;
+	float m_panning;
 
 	WindowShapes m_windows;
 
@@ -46,7 +47,8 @@ public:
 		m_currentOutput(0),
 		m_phasor(44100),
 		m_gain(0.3f),
-		m_blendAmount(0.0f)
+		m_blendAmount(0.0f),
+		m_panning(0.5f)
 	{
 		m_hannWindow = 0;
 		m_triWindow = 0;
@@ -81,10 +83,11 @@ public:
 		m_blendAmount = blendAmount;
 
 		Random r;
-		float rPitch = ((r.nextFloat() * 2.0f) - 1.0f) * randomPitch;
-
+		float rng = ((r.nextFloat() * 2.0f) - 1.0f);
+		float rPitch = rng * randomPitch;
+		m_panning = rng * panningRandomness;
+		
 		m_phasor.setFrequency(pitch + rPitch);
-
 
 		if (audio != nullptr && hann != nullptr)
 		{
@@ -162,8 +165,8 @@ public:
 
 		m_currentOutput *= m_gain;
 
-		left[position] += m_currentOutput;
-		right[position] += m_currentOutput;
+		left[position] += m_currentOutput * std::min(1.0f - m_panning, 1.0f);
+		right[position] += m_currentOutput * std::min(1.0f + m_panning, 1.0f);
 
 		++m_timeAliveSamples;
 

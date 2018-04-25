@@ -164,6 +164,13 @@ class GrainChannelComponent : public GroupComponent, public Button::Listener, pu
 	ScopedPointer<Slider> m_mainPitchSlider;
 	ScopedPointer<Slider> m_windowBlendSlider;
 
+	ScopedPointer<Label> m_startPosLabel;
+	ScopedPointer<Label> m_grainSizeLabel;
+	ScopedPointer<Label> m_pitchRandomnessLabel;
+	ScopedPointer<Label> m_startRandomnessLabel;
+	ScopedPointer<Label> m_mainPitchLabel;
+	ScopedPointer<Label> m_windowBlendLabel;
+
 	AudioFormatManager m_formatManager;
 	
 	AudioThumbnailCache m_thumbnailCache;
@@ -183,6 +190,7 @@ public:
 		laf->setColour(Slider::textBoxOutlineColourId, Colours::transparentWhite);
 		laf->setColour(Slider::textBoxTextColourId, getLookAndFeel().findColour(Slider::rotarySliderFillColourId));
 		laf->setColour(Label::backgroundWhenEditingColourId, Colours::grey);
+		laf->setColour(Label::textColourId, laf->findColour(Slider::rotarySliderFillColourId));
 		//
 		//Colour col = laf->findColour(Slider::thumbColourId);
 		//laf->setColour(Slider::thumbColourId, laf->findColour(Slider::backgroundColourId));
@@ -199,6 +207,10 @@ public:
 		m_startPositionSlider->addListener(this);
 		m_startPositionSlider->setTextBoxIsEditable(true);
 		addAndMakeVisible(m_startPositionSlider);
+		m_startPosLabel = new Label("lblStartPos", "start");
+		m_startPosLabel->setJustificationType(Justification::centred);
+		addAndMakeVisible(m_startPosLabel);
+		m_startPosLabel->attachToComponent(m_startPositionSlider, false);
 
 		m_grainSizeSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_grainSizeSlider->setName("Grain Size");
@@ -206,13 +218,21 @@ public:
 		m_grainSizeSlider->addListener(this);
 		m_grainSizeSlider->setTextBoxIsEditable(true);
 		addAndMakeVisible(m_grainSizeSlider);
+		m_grainSizeLabel = new Label("lblGrainSize", "size");
+		m_grainSizeLabel->setJustificationType(Justification::centred);
+		addAndMakeVisible(m_grainSizeLabel);
+		m_grainSizeLabel->attachToComponent(m_grainSizeSlider, false);
 
 		m_mainPitchSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_mainPitchSlider->setName("Pitch");
-		m_mainPitchSlider->setRange(-0.2, 0.2);
+		m_mainPitchSlider->setRange(-0.2, 0.2, 0.001);
 		m_mainPitchSlider->addListener(this);
 		m_mainPitchSlider->setTextBoxIsEditable(true);
 		addAndMakeVisible(m_mainPitchSlider);
+		m_mainPitchLabel = new Label("lblMainPitch", "pitch");
+		m_mainPitchLabel->setJustificationType(Justification::centred);
+		addAndMakeVisible(m_mainPitchLabel);
+		m_mainPitchLabel->attachToComponent(m_mainPitchSlider, false);
 
 		m_pitchRandomnessSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_pitchRandomnessSlider->setName("Random Pitch");
@@ -220,6 +240,10 @@ public:
 		m_pitchRandomnessSlider->addListener(this);
 		m_pitchRandomnessSlider->setTextBoxIsEditable(true);
 		addAndMakeVisible(m_pitchRandomnessSlider);
+		m_pitchRandomnessLabel = new Label("lblPitchRnd", "random pitch");
+		m_pitchRandomnessLabel->setJustificationType(Justification::centred);
+		addAndMakeVisible(m_pitchRandomnessLabel);
+		m_pitchRandomnessLabel->attachToComponent(m_pitchRandomnessSlider, false);
 
 		m_startRandomnessSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_startRandomnessSlider->setName("Start Randomness");
@@ -227,13 +251,21 @@ public:
 		m_startRandomnessSlider->addListener(this);
 		m_startRandomnessSlider->setTextBoxIsEditable(true);
 		addAndMakeVisible(m_startRandomnessSlider);
+		m_startRandomnessLabel = new Label("lblStartRnd", "random start");
+		m_startRandomnessLabel->setJustificationType(Justification::centred);
+		addAndMakeVisible(m_startRandomnessLabel);
+		m_startRandomnessLabel->attachToComponent(m_startRandomnessSlider, false);
 
-		m_windowBlendSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
+		m_windowBlendSlider = new Slider(Slider::SliderStyle::LinearVertical, Slider::TextEntryBoxPosition::NoTextBox);
 		m_windowBlendSlider->setName("Window Blend");
 		m_windowBlendSlider->setRange(0.0, 1.0, 0.001);
 		m_windowBlendSlider->addListener(this);
 		m_windowBlendSlider->setTextBoxIsEditable(true);
 		addAndMakeVisible(m_windowBlendSlider);
+		m_windowBlendLabel = new Label("lblWindowBlend", "blend");
+		m_windowBlendLabel->setJustificationType(Justification::centred);
+		addAndMakeVisible(m_windowBlendLabel);
+		m_windowBlendLabel->attachToComponent(m_windowBlendSlider, false);
 
 
 		// Audio Thumbnail
@@ -243,6 +275,7 @@ public:
 		// Window shape widget
 		m_waveWidget = new WavetableWidget();
 		addAndMakeVisible(m_waveWidget);
+
     }
 
     ~GrainChannelComponent()
@@ -265,11 +298,11 @@ public:
 
         g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
-        g.setColour (Colours::grey);
-        g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+        //g.setColour (Colours::grey);
+        //g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
-        g.setColour (Colours::white);
-        g.setFont (14.0f);
+        //g.setColour (Colours::white);
+        //g.setFont (14.0f);
         //g.drawText ("GrainChannelComponent", getLocalBounds(),
         //            Justification::centred, true);   // draw some placeholder text
 
@@ -296,9 +329,10 @@ public:
     {
 		auto bounds = getLocalBounds();
 
-		auto sliderBar = bounds.removeFromTop(getHeight() * 0.5f);
+		auto sliderBar = bounds.removeFromTop(getHeight() * 0.65f);
 		auto sliderBarWidth = getWidth() * 0.75f;
 		auto sliderRight = sliderBar.removeFromRight(sliderBarWidth);
+		auto labelbar = sliderRight.removeFromTop(sliderRight.getHeight() * 0.15f);
 
 		m_startPositionSlider->setBounds(sliderRight.removeFromLeft(sliderBarWidth *	0.2f));
 		m_grainSizeSlider->setBounds(sliderRight.removeFromLeft(sliderBarWidth *		0.2f));
@@ -306,10 +340,15 @@ public:
 		m_pitchRandomnessSlider->setBounds(sliderRight.removeFromLeft(sliderBarWidth *	0.2f));
 		m_startRandomnessSlider->setBounds(sliderRight.removeFromLeft(sliderBarWidth *	0.2f));
 
-		auto leftSlot = bounds.removeFromLeft(getWidth() * 0.25f);
-		auto buttonWidth = leftSlot.removeFromRight(leftSlot.getWidth() * 0.5f);
-		m_loadSampleButton->setBounds(leftSlot.removeFromTop(getHeight() * 0.15f).reduced(3));
-		m_windowBlendSlider->setBounds(69, 5, 64, 64);
+		m_startPosLabel->setBounds(labelbar.removeFromLeft(sliderBarWidth * 0.2f));
+		m_grainSizeLabel->setBounds(labelbar.removeFromLeft(sliderBarWidth * 0.2f));
+		m_mainPitchLabel->setBounds(labelbar.removeFromLeft(sliderBarWidth * 0.2f));
+		m_pitchRandomnessLabel->setBounds(labelbar.removeFromLeft(sliderBarWidth * 0.2f));
+		m_startRandomnessLabel->setBounds(labelbar.removeFromLeft(sliderBarWidth * 0.2f));
+
+		m_loadSampleButton->setBounds(5, getHeight() * 0.5f, 100, 25);
+		m_windowBlendSlider->setBounds(54, 5, 64, 64);
+		//m_windowBlendLabel->setBounds(64, 69, 64, 20);
 		m_waveWidget->setBounds(5, 5, 64, 64);
 
 

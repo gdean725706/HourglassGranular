@@ -20,6 +20,7 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor (Ho
 	m_grainChannel1(500,150)
 {
 	m_grainChannel1.assignGrainProcessor(processor.getGranularProcessor());
+	m_effectComponent.assignGrainProcessor(processor.getGranularProcessor());
 
 	// Use light colour scheme for a change
 	if (auto v4 = dynamic_cast<LookAndFeel_V4*> (&getLookAndFeel()))
@@ -32,6 +33,7 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor (Ho
 	laf->setColour(Slider::textBoxOutlineColourId, Colours::transparentWhite);
 	laf->setColour(Slider::textBoxTextColourId, getLookAndFeel().findColour(Slider::rotarySliderFillColourId));
 	laf->setColour(Label::backgroundWhenEditingColourId, Colours::grey);
+	laf->setColour(Label::textColourId, laf->findColour(Slider::rotarySliderFillColourId));
 
 	m_masterTempoSlider = new Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxAbove);
 	m_masterTempoSlider->setName("Master Tempo");
@@ -45,15 +47,17 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor (Ho
 
 	m_tempoDivision = new Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxAbove);
 	m_tempoDivision->setName("Tempo Division");
-	m_tempoDivision->setRange(0.05, 8.0, 0.05);
+	m_tempoDivision->setRange(0.25, 8.0, 0.25);
 	m_tempoDivision->setTextBoxIsEditable(true);
 	m_tempoDivision->addListener(this);
+	m_tempoDivision->setTextValueSuffix("DIV");
 	m_tempoDivision->setValue(1.0f, NotificationType::dontSendNotification);
 	m_tempoDivision->setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxAbove, false, 100, 20);
 	addAndMakeVisible(m_tempoDivision);
 
+	addAndMakeVisible(m_effectComponent);
 
-    setSize (600, 300);
+    setSize (600, 350);
 	setResizable(true, true);
 }
 
@@ -88,6 +92,8 @@ void HourglassGranularAudioProcessorEditor::resized()
 	m_masterTempoSlider->setBounds(settingsBar.removeFromRight(100));
 	m_tempoDivision->setBounds(settingsBar.removeFromRight(100));
 	m_grainChannel1.setBounds(windowSize.removeFromTop(200).reduced(5));
+
+	m_effectComponent.setBounds(windowSize.removeFromTop(100).reduced(5));
 
 }
 

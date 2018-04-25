@@ -15,20 +15,28 @@
               companyName="Point3dsp">
   <MAINGROUP id="YfQrpo" name="HourglassGranular">
     <GROUP id="{773F1AFC-5E5D-8FDE-533E-5A8BFAA76DD6}" name="Source">
-      <FILE id="l4EUnS" name="Grain.h" compile="0" resource="0" file="Source/Grain.h"/>
-      <FILE id="VGdqBh" name="GrainChannelComponent.h" compile="0" resource="0"
-            file="Source/GrainChannelComponent.h"/>
-      <FILE id="T5mEUa" name="GrainTable.h" compile="0" resource="0" file="Source/GrainTable.h"/>
-      <FILE id="BotaZs" name="JuicyClouds.cpp" compile="1" resource="0" file="Source/JuicyClouds.cpp"/>
-      <FILE id="r7y6Qi" name="JuicyClouds.h" compile="0" resource="0" file="Source/JuicyClouds.h"/>
-      <FILE id="LA2GzW" name="Phasor.h" compile="0" resource="0" file="Source/Phasor.h"/>
-      <FILE id="FkqC0F" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="sXQ7bG" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
-      <FILE id="OYo3GE" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="dhxoor" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <GROUP id="{9EB83F55-9703-7AFA-2D2B-E0DB56F4459D}" name="Audio">
+        <FILE id="l4EUnS" name="Grain.h" compile="0" resource="0" file="Source/Grain.h"/>
+        <FILE id="T5mEUa" name="GrainTable.h" compile="0" resource="0" file="Source/GrainTable.h"/>
+        <FILE id="BotaZs" name="JuicyClouds.cpp" compile="1" resource="0" file="Source/JuicyClouds.cpp"/>
+        <FILE id="r7y6Qi" name="JuicyClouds.h" compile="0" resource="0" file="Source/JuicyClouds.h"/>
+        <FILE id="LA2GzW" name="Phasor.h" compile="0" resource="0" file="Source/Phasor.h"/>
+        <FILE id="FkqC0F" name="PluginProcessor.cpp" compile="1" resource="0"
+              file="Source/PluginProcessor.cpp"/>
+        <FILE id="sXQ7bG" name="PluginProcessor.h" compile="0" resource="0"
+              file="Source/PluginProcessor.h"/>
+      </GROUP>
+      <GROUP id="{1C94860E-B338-761C-7E9F-6A76BF66A7B3}" name="UI">
+        <FILE id="nPEuqJ" name="EffectControlComponent.h" compile="0" resource="0"
+              file="Source/EffectControlComponent.h"/>
+        <FILE id="q5m74X" name="CustomLookAndFeel.h" compile="0" resource="0"
+              file="Source/CustomLookAndFeel.h"/>
+        <FILE id="OYo3GE" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/PluginEditor.cpp"/>
+        <FILE id="dhxoor" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+        <FILE id="VGdqBh" name="GrainChannelComponent.h" compile="0" resource="0"
+              file="Source/GrainChannelComponent.h"/>
+      </GROUP>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

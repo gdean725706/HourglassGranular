@@ -84,7 +84,8 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 							m_startRandomness, // random start amount
 							m_pitchRandomness,// random pitch amount
 							0.3f, // Gain
-							m_blendAmount); // Blend amount
+							m_blendAmount,
+							m_panningRandomness); // Blend amount
 						
 						spawned = true;
 						m_samplesUntilSpawn = m_samplesPerSpawn;

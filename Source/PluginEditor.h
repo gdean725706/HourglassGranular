@@ -13,6 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 #include "GrainChannelComponent.h"
+#include "EffectControlComponent.h"
 
 //==============================================================================
 /**
@@ -31,6 +32,7 @@ private:
 	GrainChannelComponent m_grainChannel1;
 	ScopedPointer<Slider> m_masterTempoSlider;
 	ScopedPointer<Slider> m_tempoDivision;
+	EffectControlComponent m_effectComponent;
 
 
     // This reference is provided as a quick way for your editor to
