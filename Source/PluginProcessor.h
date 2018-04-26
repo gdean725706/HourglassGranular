@@ -77,6 +77,8 @@ private:
 
 	PitchShifter m_pitchShifter;
 
+	//File* m_audioFile;
+
 	//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HourglassGranularAudioProcessor)
 };

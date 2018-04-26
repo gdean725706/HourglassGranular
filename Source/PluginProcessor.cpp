@@ -230,8 +230,17 @@ void HourglassGranularAudioProcessor::setStateInformation (const void* data, int
 {
 	std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 	if (xmlState.get() != nullptr)
-		if (xmlState->hasTagName(m_parameters.state.getType()))
-			m_parameters.state = ValueTree::fromXml(*xmlState);
+		m_parameters.state = ValueTree::fromXml(*xmlState);
+
+	// the value tree listener doesn't seem to reliably detect changes to the sample file property :(
+	// so hacky workaround is to add whitespace to the end so it detects a change
+	// then trim the whitespace on the other side
+	String s = m_parameters.state.getProperty("SampleFile");
+	s = s + " ";
+	m_parameters.state.setProperty(Identifier("SampleFile"), s, nullptr);
+
+	//DBG(s);
+
 }
 
 JuicyClouds* HourglassGranularAudioProcessor::getGranularProcessor()

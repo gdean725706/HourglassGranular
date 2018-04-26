@@ -150,7 +150,9 @@ public:
 //==============================================================================
 /*
 */
-class GrainChannelComponent : public GroupComponent, public Button::Listener, public Slider::Listener, public ChangeListener, public Label::Listener
+class GrainChannelComponent : 
+	public GroupComponent, public Button::Listener, public Slider::Listener,
+	public ChangeListener, public Label::Listener, public ValueTree::Listener
 {
 
 
@@ -262,6 +264,7 @@ public:
 		m_waveWidget = new WavetableWidget();
 		addAndMakeVisible(m_waveWidget);
 
+		m_valueTreeState.state.addListener(this);
     }
 
     ~GrainChannelComponent()
@@ -341,7 +344,7 @@ public:
 
     }
 
-	void loadSample()
+	void browseSample()
 	{
 		if (m_grainProcessor == 0) return;
 
@@ -354,18 +357,34 @@ public:
 		if (fileSelector.browseForFileToOpen())
 		{
 			File selectedFile = fileSelector.getResult();
-			ScopedPointer<AudioFormatReader> reader = m_formatManager.createReaderFor(selectedFile);
-			AudioSampleBuffer buffer(reader->numChannels, reader->lengthInSamples);
+			
+			//ValueTree v(Identifier("SampleFile"));
+			//v.setProperty(Identifier("Path"), selectedFile.getFullPathName(), nullptr);
 
-			reader->read(&buffer, 0, reader->lengthInSamples, 0, true, false);
-			m_grainProcessor->setAudioSize(buffer.getNumSamples());
-			for (int i = 0; i < buffer.getNumSamples(); ++i)
-			{
-				m_grainProcessor->setAudioSample(i, buffer.getSample(0, i));
-			}
+			//m_valueTreeState.state.addChild(v, 0, nullptr);
+			//
+			m_valueTreeState.state.setProperty(Identifier("SampleFile"), selectedFile.getFullPathName(), nullptr);
 
-			m_sampleThumbnail.setSource(new FileInputSource(selectedFile));
+
+			//loadSample(selectedFile);
 		}
+
+
+	}
+
+	void loadSample(File file)
+	{
+		ScopedPointer<AudioFormatReader> reader = m_formatManager.createReaderFor(file);
+		AudioSampleBuffer buffer(reader->numChannels, reader->lengthInSamples);
+
+		reader->read(&buffer, 0, reader->lengthInSamples, 0, true, false);
+		m_grainProcessor->setAudioSize(buffer.getNumSamples());
+		for (int i = 0; i < buffer.getNumSamples(); ++i)
+		{
+			m_grainProcessor->setAudioSample(i, buffer.getSample(0, i));
+		}
+
+		m_sampleThumbnail.setSource(new FileInputSource(file));
 
 		m_grainProcessor->setPlayState(true);
 	}
@@ -375,7 +394,7 @@ public:
 	{
 		if (button == m_loadSampleButton)
 		{
-			loadSample();
+			browseSample();
 		}
 	}
 
@@ -400,6 +419,53 @@ public:
 		{
 			repaint();
 		}
+	}
+
+
+
+	void valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged,
+		const Identifier& property) override
+	{
+
+		//DBG(s);
+	
+		if (property == Identifier("SampleFile"))
+			{
+				String s = m_valueTreeState.state.getProperty(property);
+				File f(s.trim());
+				if (f.exists())
+				{
+					loadSample(f);
+				}
+				else
+				{
+					AlertWindow::showMessageBox(AlertWindow::AlertIconType::WarningIcon, "hourglass", ("Could not locate sample " + property.toString()), "OK", this);
+				}
+			}
+		//}
+	}
+
+	void valueTreeChildRemoved(ValueTree& parentTree,
+		ValueTree& childWhichHasBeenRemoved,
+		int indexFromWhichChildWasRemoved) override
+	{
+
+	}
+
+	void valueTreeChildOrderChanged(ValueTree& parentTreeWhoseChildrenHaveMoved,
+		int oldIndex, int newIndex) override
+	{
+
+	}
+
+	void valueTreeParentChanged(ValueTree& treeWhoseParentHasChanged) override
+	{
+
+	}
+	void valueTreeChildAdded(ValueTree& parentTree,
+		ValueTree& childWhichHasBeenAdded) override
+	{
+
 	}
 
 private:
