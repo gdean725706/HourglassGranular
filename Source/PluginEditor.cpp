@@ -18,7 +18,7 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 	AudioProcessorEditor(&p),
 	processor(p),
 	m_grainChannel1(vts),
-	m_effectComponent(&p),
+	m_effectComponent(&p, vts),
 	m_valueTreeState(vts)
 {
 	m_grainChannel1.assignGrainProcessor(processor.getGranularProcessor());
@@ -46,6 +46,7 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 	m_masterTempoSlider->setValue(120.0f, NotificationType::dontSendNotification);
 	m_masterTempoSlider->setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxAbove, false, 100, 20);
 	addAndMakeVisible(m_masterTempoSlider);
+	m_masterTempoAttachment.reset(new SliderAttachment(m_valueTreeState, "masterTempo", *m_masterTempoSlider));
 
 	m_tempoDivision = new Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxAbove);
 	m_tempoDivision->setName("Tempo Division");
@@ -56,6 +57,7 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 	m_tempoDivision->setValue(1.0f, NotificationType::dontSendNotification);
 	m_tempoDivision->setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxAbove, false, 100, 20);
 	addAndMakeVisible(m_tempoDivision);
+	m_tempoDivisionAttachment.reset(new SliderAttachment(m_valueTreeState, "tempoDivision", *m_tempoDivision));
 
 	addAndMakeVisible(m_effectComponent);
 
@@ -104,13 +106,12 @@ void HourglassGranularAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
 	if (slider == m_masterTempoSlider)
 	{
-		processor.getGranularProcessor()->setBPM(m_masterTempoSlider->getValue());
 	}
 	else if (slider == m_tempoDivision)
 	{
-		processor.getGranularProcessor()->setDivision(m_tempoDivision->getValue());
 	}
 }
+
 
 
 

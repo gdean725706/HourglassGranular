@@ -24,18 +24,8 @@ JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleR
 	m_phasorSpeed(1),
 	m_pitchRandomness(0),
 	m_masterPitch(0),
-	m_panningRandomness(0),
-	m_bpm(120.0f),
-	m_division(1),
 	m_pitchOffset(0)
 {
-	//m_windowTable.printData();
-	m_audioTable.fillSine(440);
-	m_triwTable.fillTriangleWindow();
-	m_sineTable.fillSineWindow();
-	m_playbackPhasor.setFrequency(0.01);
-	setGrainPitch(1);
-	calculateSamplesPerStep();
 
 	parameters.createAndAddParameter(
 		"grainSizeMultiplier",
@@ -62,6 +52,14 @@ JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleR
 		nullptr, nullptr);
 
 	parameters.createAndAddParameter(
+		"pitchRandomness",
+		"Random Pitch",
+		"random pitch",
+		NormalisableRange<float>(0.0, 1.0, 0.001),
+		0,
+		nullptr, nullptr);
+
+	parameters.createAndAddParameter(
 		"windowBlend",
 		"Window Blend",
 		"blend",
@@ -69,12 +67,52 @@ JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleR
 		0,
 		nullptr, nullptr);
 
+	parameters.createAndAddParameter(
+		"randomPan",
+		"Random Pan",
+		"random pan",
+		NormalisableRange<float>(0.0, 1.0, 0.001),
+		0,
+		nullptr, nullptr);
+
+	parameters.createAndAddParameter(
+		"masterTempo",
+		"Master Tempo",
+		"bpm",
+		NormalisableRange<float>(60.0f, 200.0f, 0.5f),
+		120.0f,
+		nullptr, nullptr);
+
+	parameters.createAndAddParameter(
+		"tempoDivision",
+		"Tempo Division",
+		"div",
+		NormalisableRange<float>(0.25, 8.0, 0.25),
+		1.0f,
+		nullptr, nullptr);
+
+	parameters.addParameterListener("masterTempo", this);
+	parameters.addParameterListener("tempoDivision", this);
+
 	//parameters.state = ValueTree(Identifier("HourglassGranular"));
 
 	m_grainSizeMultiplier = parameters.getRawParameterValue("grainSizeMultiplier");
 	m_startPosition = parameters.getRawParameterValue("grainStartPosition");
 	m_startRandomness = parameters.getRawParameterValue("startRandomness");
+	m_pitchRandomness = parameters.getRawParameterValue("pitchRandomness");
 	m_blendAmount = parameters.getRawParameterValue("windowBlend");
+	m_panningRandomness = parameters.getRawParameterValue("randomPan");
+
+	m_bpm = parameters.getRawParameterValue("masterTempo");
+	m_division = parameters.getRawParameterValue("tempoDivision");
+
+	//m_windowTable.printData();
+	m_audioTable.fillSine(440);
+	m_triwTable.fillTriangleWindow();
+	m_sineTable.fillSineWindow();
+	m_playbackPhasor.setFrequency(0.01);
+	setGrainPitch(1);
+	calculateSamplesPerStep();
 }
 
 
@@ -117,10 +155,10 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 							start, //m_playbackPhasor.getPhase() * m_audioTable.getSize() , // start position (phasor this?)
 							m_masterPitch, // pitch
 							*m_startRandomness, // random start amount
-							m_pitchRandomness,// random pitch amount
+							*m_pitchRandomness,// random pitch amount
 							0.3f, // Gain
 							*m_blendAmount,
-							m_panningRandomness); // Blend amount
+							*m_panningRandomness); // Blend amount
 						
 						spawned = true;
 						m_samplesUntilSpawn = m_samplesPerSpawn;
@@ -164,37 +202,27 @@ void JuicyClouds::calculatePhasorSpeed()
 	m_phasorSpeed = m_sampleRate / m_audioTable.getSize();
 }
 
-void JuicyClouds::setPitchRandomness(float amount)
-{
-	m_pitchRandomness = amount;
-}
-
 
 void JuicyClouds::setPitch(float pitch)
 {
 	m_pitchOffset = pitch;
 }
 
-void JuicyClouds::setPanningRandomness(float amount)
-{
-	m_panningRandomness = amount;
-}
-
 void JuicyClouds::calculateSamplesPerStep()
 {
-	m_samplesPerSpawn = (m_sampleRate * 60.0f / m_bpm) / m_division;
+	m_samplesPerSpawn = (m_sampleRate * 60.0f / *m_bpm) / *m_division;
 	DBG(m_samplesPerSpawn);
 }
 
 void JuicyClouds::setBPM(float bpm)
 {
-	m_bpm = bpm;
+	*m_bpm = bpm;
 	calculateSamplesPerStep();
 }
 
 void JuicyClouds::setDivision(float div)
 {
-	m_division = div;
+	*m_division = div;
 	calculateSamplesPerStep();
 }
 
@@ -206,4 +234,16 @@ void JuicyClouds::setGrainPitch(float midiValue)
 
 	m_masterPitch = phasorSpeed;
 
+}
+
+void JuicyClouds::parameterChanged(const String& parameterID, float newValue)
+{
+	if (parameterID == "masterTempo")
+	{
+		calculateSamplesPerStep();
+	}
+	else if (parameterID == "tempoDivision")
+	{
+		calculateSamplesPerStep();
+	}
 }

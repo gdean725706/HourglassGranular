@@ -25,7 +25,10 @@ public:
     ~HourglassGranularAudioProcessorEditor();
 
     //==============================================================================
-    void paint (Graphics&) override;
+
+	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+
+	void paint (Graphics&) override;
     void resized() override;
 	void sliderValueChanged(Slider* slider) override;
 private:
@@ -33,6 +36,10 @@ private:
 	ScopedPointer<Slider> m_masterTempoSlider;
 	ScopedPointer<Slider> m_tempoDivision;
 	EffectControlComponent m_effectComponent;
+
+	std::unique_ptr<SliderAttachment> m_masterTempoAttachment;
+	std::unique_ptr<SliderAttachment> m_tempoDivisionAttachment;
+
 
 	AudioProcessorValueTreeState& m_valueTreeState;
 

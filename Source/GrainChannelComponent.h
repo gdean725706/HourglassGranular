@@ -227,6 +227,7 @@ public:
 		m_pitchRandomnessLabel->setJustificationType(Justification::centred);
 		addAndMakeVisible(m_pitchRandomnessLabel);
 		m_pitchRandomnessLabel->attachToComponent(m_pitchRandomnessSlider, false);
+		m_randomPitchAttachment.reset(new SliderAttachment(m_valueTreeState, "pitchRandomness", *m_pitchRandomnessSlider));
 
 		m_startRandomnessSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_startRandomnessSlider->setName("Start Randomness");
@@ -382,23 +383,6 @@ public:
 	{
 		if (m_grainProcessor == 0) return; 
 
-		if (slider == m_grainSizeSlider)
-		{
-		}
-		else if (slider == m_startPositionSlider)
-		{
-		}
-		else if (slider == m_pitchRandomnessSlider)
-		{
-			m_grainProcessor->setPitchRandomness(m_pitchRandomnessSlider->getValue());
-		}
-		else if (slider == m_startRandomnessSlider)
-		{
-		}
-		else if (slider == m_mainPitchSlider)
-		{
-			m_grainProcessor->setPitch(m_mainPitchSlider->getValue());
-		}
 		else if (slider == m_windowBlendSlider)
 		{
 			m_waveWidget->setBlendAmount(m_windowBlendSlider->getValue());
@@ -426,13 +410,19 @@ private:
 
 	ScopedPointer<Slider> m_startPositionSlider;
 	std::unique_ptr<SliderAttachment> m_startPositionAttachment;
+
 	ScopedPointer<Slider> m_grainSizeSlider;
 	std::unique_ptr<SliderAttachment> m_grainSizeAttachment;
+
 	ScopedPointer<Slider> m_pitchRandomnessSlider;
+	std::unique_ptr<SliderAttachment> m_randomPitchAttachment;
+
 	ScopedPointer<Slider> m_startRandomnessSlider;
 	std::unique_ptr<SliderAttachment> m_startRandomAttachment;
+
 	ScopedPointer<Slider> m_mainPitchSlider;
 	std::unique_ptr<SliderAttachment> m_mainPitchAttachment;
+
 	ScopedPointer<Slider> m_windowBlendSlider;
 	std::unique_ptr<SliderAttachment> m_blendAttachment;
 

@@ -19,10 +19,10 @@ class EffectControlComponent    : public Component, public Slider::Listener
 {
 public:
 	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
-	typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
-	EffectControlComponent(HourglassGranularAudioProcessor* p) :
-		m_processor(p)
+	EffectControlComponent(HourglassGranularAudioProcessor* p, AudioProcessorValueTreeState& vts) :
+		m_processor(p),
+		m_valueTreeState(vts)
 	{
 
 		m_randomPanningSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
@@ -33,6 +33,7 @@ public:
 		m_randomPanLabel = new Label("lblRandPan", "random pan");
 		m_randomPanLabel->attachToComponent(m_randomPanningSlider, false);
 		m_randomPanLabel->setJustificationType(Justification::centred);
+		m_randomPanAttachment.reset(new SliderAttachment(m_valueTreeState, "randomPan", *m_randomPanningSlider));
 
 		m_feedbackSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_feedbackSlider->setRange(0.0, 1.0, 0.01);
@@ -95,7 +96,6 @@ public:
 		{
 			if (slider == m_randomPanningSlider)
 			{
-				m_grainProcessor->setPanningRandomness(m_randomPanningSlider->getValue());
 			}
 			else if (slider == m_feedbackSlider)
 			{
@@ -128,6 +128,10 @@ private:
 
 	HourglassGranularAudioProcessor* m_processor;
 	JuicyClouds* m_grainProcessor;
+
+	AudioProcessorValueTreeState& m_valueTreeState;
+
+	std::unique_ptr<SliderAttachment> m_randomPanAttachment;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EffectControlComponent)

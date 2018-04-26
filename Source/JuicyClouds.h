@@ -15,7 +15,7 @@
 
 typedef std::vector<Grain> GrainVector;
 
-class JuicyClouds
+class JuicyClouds : public AudioProcessorValueTreeState::Listener
 {
 	AudioProcessorValueTreeState& m_parameters;
 
@@ -34,13 +34,14 @@ class JuicyClouds
 	float* m_startPosition = nullptr;
 	float* m_blendAmount = nullptr;
 	float* m_startRandomness = nullptr;
+	float* m_panningRandomness = nullptr;
+	float* m_pitchRandomness = nullptr;
 
-	float m_pitchRandomness;
 	float m_masterPitch;
-	float m_panningRandomness;
 
-	float m_bpm;
-	float m_division;
+	float* m_bpm = nullptr;
+	float* m_division = nullptr;
+	
 	float m_pitchOffset;
 
 public:
@@ -55,13 +56,13 @@ public:
 	void setAudioSample(int index, float value);
 	void calculatePhasorSpeed();
 
-	void setPitchRandomness(float amount);
 	void setPitch(float pitch);
-	void setPanningRandomness(float amount);
 
 	void calculateSamplesPerStep();
 	void setBPM(float bpm);
 	void setDivision(float div);
 
 	void setGrainPitch(float midiValue);
+	
+	void parameterChanged(const String& parameterID, float newValue) override;
 };
