@@ -56,6 +56,8 @@ public:
 		m_allpass6.createAllPass(1000.0f, 1.0f);
 
 		m_phasor.setFrequency(0.3f);
+
+		m_amount.reset(44100.0, 0.8);
 	}
 
 	void prepareToPlay(double sampleRate)
@@ -67,11 +69,19 @@ public:
 		m_allpass5.setSampleRate(sampleRate);
 		m_allpass6.setSampleRate(sampleRate);
 		m_phasor.setSampleRate(sampleRate);
+		m_amount.reset(sampleRate, 0.8);
 	}
 
 	void process(float* leftChannel, float* rightChannel, int blockSize)
 	{
-		if (*m_phasorIntensity == 0) return;
+		if (*m_phasorIntensity == 0)
+		{
+			m_amount.setValue(0.0f);
+		}
+		else 
+		{
+			m_amount.setValue(1.0f);
+		}
 
 		for (int i = 0; i < blockSize; ++i)
 		{
@@ -87,12 +97,16 @@ public:
 			m_allpass5.createAllPass(t, *m_phaseQ);
 			m_allpass6.createAllPass(t, *m_phaseQ);
 
-			leftChannel[i] += m_allpass1.processSingle(leftChannel[i]);
-			rightChannel[i] += m_allpass2.processSingle(rightChannel[i]);
-			leftChannel[i] += m_allpass3.processSingle(leftChannel[i]);
-			rightChannel[i] += m_allpass4.processSingle(rightChannel[i]);
-			leftChannel[i] += m_allpass5.processSingle(leftChannel[i]);
-			rightChannel[i] += m_allpass6.processSingle(rightChannel[i]);
+			float gain = m_amount.getNextValue();
+			gain *= 0.75f;
+
+			leftChannel[i] += m_allpass1.processSingle(leftChannel[i]) * gain;
+			rightChannel[i] += m_allpass2.processSingle(rightChannel[i]) * gain;
+			leftChannel[i] += m_allpass3.processSingle(leftChannel[i]) * gain;
+			rightChannel[i] += m_allpass4.processSingle(rightChannel[i]) * gain;
+			leftChannel[i] += m_allpass5.processSingle(leftChannel[i]) * gain;
+			rightChannel[i] += m_allpass6.processSingle(rightChannel[i]) * gain;
+
 
 			m_phasor.tick();
 		}
@@ -112,4 +126,6 @@ private:
 	Phasor m_phasor;
 	
 	float* m_phasorSpeed = nullptr, *m_phasorIntensity = nullptr, *m_phaseQ = nullptr;
+
+	LinearSmoothedValue<float> m_amount;
 };

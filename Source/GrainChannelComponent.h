@@ -366,6 +366,8 @@ public:
 			m_valueTreeState.state.setProperty(Identifier("SampleFile"), selectedFile.getFullPathName(), nullptr);
 
 
+			m_grainProcessor->setPlayState(true);
+
 			//loadSample(selectedFile);
 		}
 
