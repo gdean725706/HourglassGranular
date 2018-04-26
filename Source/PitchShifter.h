@@ -46,7 +46,7 @@ public:
 			"pitchShiftFrequency",
 			"Pitch Shift Frequency",
 			"pitch",
-			NormalisableRange<float>(-24.0f, 24.0f, 0.5f),
+			NormalisableRange<float>(-12.0f, 12.0f, 0.1f),
 			0.0f,
 			nullptr, nullptr);
 		parameters.addParameterListener("pitchShiftFrequency", this);

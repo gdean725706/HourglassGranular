@@ -39,23 +39,42 @@ public:
 		m_feedbackSlider->setRange(0.0, 1.0, 0.01);
 		m_feedbackSlider->setTextBoxIsEditable(true);
 		m_feedbackSlider->addListener(this);
-		addAndMakeVisible(m_feedbackSlider);
+		//addAndMakeVisible(m_feedbackSlider);
 		m_feedbackLabel = new Label("lblFeedback", "feedback");
 		m_feedbackLabel->attachToComponent(m_feedbackSlider, false);
 		m_feedbackLabel->setJustificationType(Justification::centred);
 
-		m_phaseSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
-		m_phaseSlider->setRange(30.0, 10000.0, 0.01);
-		m_phaseSlider->setTextBoxIsEditable(true);
-		m_phaseSlider->addListener(this);
-		addAndMakeVisible(m_phaseSlider);
+		m_phaserDepthSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
+		m_phaserDepthSlider->setRange(0.0, 1.0, 0.001);
+		m_phaserDepthSlider->setTextBoxIsEditable(true);
+		m_phaserDepthSlider->addListener(this);
+		addAndMakeVisible(m_phaserDepthSlider);
+		m_phaseDepthLabel = new Label("lblPhaserDepth", "phaser depth");
+		m_phaseDepthLabel->attachToComponent(m_phaserDepthSlider, false);
+		m_phaseDepthLabel->setJustificationType(Justification::centred);
+		m_phaserDepthAttach.reset(new SliderAttachment(m_valueTreeState, "phaserDepth", *m_phaserDepthSlider));
+
+		m_phaseSpeedSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
+		m_phaseSpeedSlider->setRange(0.02, 10.0, 0.01);
+		m_phaseSpeedSlider->setTextBoxIsEditable(true);
+		m_phaseSpeedSlider->addListener(this);
+		addAndMakeVisible(m_phaseSpeedSlider);
+		m_phaseSpeedLabel = new Label("lblPhaserSpeed", "phaser speed");
+		m_phaseSpeedLabel->attachToComponent(m_phaseSpeedSlider, false);
+		m_phaseSpeedLabel->setJustificationType(Justification::centred);
+		m_phaseSpeedAttach.reset(new SliderAttachment(m_valueTreeState, "phaserSpeed", *m_phaseSpeedSlider));
 
 		m_phaseQSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
-		m_phaseQSlider->setRange(0.25, 8, 0.01);
+		m_phaseQSlider->setRange(0.5, 2.5, 0.01);
 		m_phaseQSlider->setTextBoxIsEditable(true);
 		m_phaseQSlider->addListener(this);
 		addAndMakeVisible(m_phaseQSlider);
-    }
+		m_phaseQLabel = new Label("lblPhaserQ", "phaser q");
+		m_phaseQLabel->attachToComponent(m_phaseQSlider, false);
+		m_phaseQLabel->setJustificationType(Justification::centred);
+		m_phaseQAttach.reset(new SliderAttachment(m_valueTreeState, "phaserQ", *m_phaseQSlider));
+
+	}
 
     ~EffectControlComponent()
     {
@@ -82,8 +101,13 @@ public:
 
 		m_randomPanningSlider->setBounds(bounds.removeFromLeft(100));
 		m_feedbackSlider->setBounds(bounds.removeFromLeft(100));
-		m_phaseSlider->setBounds(bounds.removeFromRight(100));
-		m_phaseQSlider->setBounds(bounds.removeFromRight(100));
+		m_phaserDepthSlider->setBounds(bounds.removeFromRight(	75));
+		m_phaseSpeedSlider->setBounds(bounds.removeFromRight(	75));
+		m_phaseQSlider->setBounds(bounds.removeFromRight(		75));
+
+		//m_phaseDepthLabel->setBounds(labelBar.removeFromRight(100));
+		//m_phaseSpeedLabel->setBounds(labelBar.removeFromRight(100));
+		//m_phaseQLabel->setBounds(labelBar.removeFromRight(100));
 
 		m_randomPanLabel->setBounds(labelBar.removeFromLeft(100));
 		m_feedbackLabel->setBounds(labelBar.removeFromLeft(100));
@@ -101,13 +125,13 @@ public:
 			{
 
 			}
-			else if (slider == m_phaseSlider)
+			else if (slider == m_phaserDepthSlider)
 			{
-				m_processor->setAllPassFreq(m_phaseSlider->getValue());
+				m_processor->setAllPassFreq(m_phaserDepthSlider->getValue());
 			}
-			else if (slider == m_phaseQSlider)
+			else if (slider == m_phaseSpeedSlider)
 			{
-				m_processor->setAllPassQ(m_phaseQSlider->getValue());
+				m_processor->setAllPassQ(m_phaseSpeedSlider->getValue());
 			}
 		}
 	}
@@ -123,8 +147,12 @@ private:
 	ScopedPointer<Slider> m_feedbackSlider;
 	ScopedPointer<Label> m_feedbackLabel;
 
-	ScopedPointer<Slider> m_phaseSlider;
+	ScopedPointer<Slider> m_phaserDepthSlider;
+	ScopedPointer<Slider> m_phaseSpeedSlider;
 	ScopedPointer<Slider> m_phaseQSlider;
+	ScopedPointer<Label> m_phaseDepthLabel;
+	ScopedPointer<Label> m_phaseSpeedLabel;
+	ScopedPointer<Label> m_phaseQLabel;
 
 	HourglassGranularAudioProcessor* m_processor;
 	JuicyClouds* m_grainProcessor;
@@ -132,6 +160,9 @@ private:
 	AudioProcessorValueTreeState& m_valueTreeState;
 
 	std::unique_ptr<SliderAttachment> m_randomPanAttachment;
+	std::unique_ptr<SliderAttachment> m_phaseSpeedAttach;
+	std::unique_ptr<SliderAttachment> m_phaserDepthAttach;
+	std::unique_ptr<SliderAttachment> m_phaseQAttach;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EffectControlComponent)

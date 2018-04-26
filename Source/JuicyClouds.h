@@ -65,4 +65,5 @@ public:
 	void setGrainPitch(float midiValue);
 	
 	void parameterChanged(const String& parameterID, float newValue) override;
+
 };

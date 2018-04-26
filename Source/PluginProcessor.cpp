@@ -33,7 +33,8 @@ HourglassGranularAudioProcessor::HourglassGranularAudioProcessor()
 	m_allpassRight2(44100.0f),
 	m_apFreq(1000.0f),
 	m_apQ(1.0f),
-	m_pitchShifter(m_parameters)
+	m_pitchShifter(m_parameters),
+	m_phaseShifter(m_parameters)
 {
 	m_ampEnv.setAttack(0.01f);
 	m_ampEnv.setDecay(0.1f);
@@ -127,6 +128,7 @@ void HourglassGranularAudioProcessor::prepareToPlay (double sampleRate, int samp
 	m_allpassRight2.setSampleRate(sampleRate);
 
 	m_pitchShifter.prepareToPlay(sampleRate, samplesPerBlock);
+	m_phaseShifter.prepareToPlay(sampleRate);
 }
 
 void HourglassGranularAudioProcessor::releaseResources()
@@ -187,12 +189,14 @@ void HourglassGranularAudioProcessor::processBlock (AudioSampleBuffer& buffer, M
 
 	m_clouds.process(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
 
-	m_allpassLeft.process(buffer.getWritePointer(0), buffer.getNumSamples());
-	m_allpassRight.process(buffer.getWritePointer(1), buffer.getNumSamples());
-	m_allpassLeft2.process(buffer.getWritePointer(0), buffer.getNumSamples());
-	m_allpassRight2.process(buffer.getWritePointer(1), buffer.getNumSamples());
+	//m_allpassLeft.process(buffer.getWritePointer(0), buffer.getNumSamples());
+	//m_allpassRight.process(buffer.getWritePointer(1), buffer.getNumSamples());
+	//m_allpassLeft2.process(buffer.getWritePointer(0), buffer.getNumSamples());
+	//m_allpassRight2.process(buffer.getWritePointer(1), buffer.getNumSamples());
 	
 	m_pitchShifter.processBlock(buffer, midiMessages);
+
+	m_phaseShifter.process(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
 
 	return;
 

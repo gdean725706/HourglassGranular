@@ -23,13 +23,15 @@ http://musicdsp.org/files/Audio-EQ-Cookbook.txt
 class BiQuad
 {
 public:
-	BiQuad(float sampleRate);
+	BiQuad(float sampleRate = 44100.0f);
 
 	void setSampleRate(float sampleRate);
 
 	void createAllPass(float frequency, float Q);
 
 	void process(float* const samples, const int numSamples);
+
+	float processSingle(const float sample);
 
 	void debugPrintCoeffs();
 

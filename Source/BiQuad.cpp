@@ -79,6 +79,18 @@ void BiQuad::process(float* const samples, const int numSamples)
 	}
 }
 
+float BiQuad::processSingle(const float sample)
+{
+	const float x0 = sample;
+	float y0(0);
+	y0 = (b0 / a0)*x0 + (b1 / a0)*x1 + (b2 / a0)*x2 - (a1 / a0)*y1 - (a2 / a0)*y2;
+	x2 = x1;
+	x1 = x0;
+	y2 = y1;
+	y1 = y0;
+	return y0;
+}
+
 void BiQuad::debugPrintCoeffs()
 {
 	//DBG(a0);

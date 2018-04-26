@@ -209,7 +209,7 @@ public:
 
 		m_mainPitchSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_mainPitchSlider->setName("Pitch");
-		m_mainPitchSlider->setRange(-0.2, 0.2, 0.001);
+		m_mainPitchSlider->setRange(-12.0f, 12.0f, 0.1f);
 		m_mainPitchSlider->addListener(this);
 		m_mainPitchSlider->setTextBoxIsEditable(true);
 		addAndMakeVisible(m_mainPitchSlider);

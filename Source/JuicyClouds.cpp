@@ -56,8 +56,9 @@ JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleR
 		"Random Pitch",
 		"random pitch",
 		NormalisableRange<float>(0.0, 1.0, 0.001),
-		0,
-		nullptr, nullptr);
+		0.0f,
+		nullptr,
+		nullptr);
 
 	parameters.createAndAddParameter(
 		"windowBlend",

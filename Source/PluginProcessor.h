@@ -15,6 +15,7 @@
 #include "EnvelopeGenerator.h"
 #include "BiQuad.h"
 #include "PitchShifter.h"
+#include "PhaseShifter.h"
 
 //==============================================================================
 /**
@@ -76,6 +77,8 @@ private:
 	float m_apFreq, m_apQ;
 
 	PitchShifter m_pitchShifter;
+
+	PhaseShifter m_phaseShifter;
 
 	//File* m_audioFile;
 
