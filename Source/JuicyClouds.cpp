@@ -10,8 +10,8 @@
 
 #include "JuicyClouds.h"
 
-JuicyClouds::JuicyClouds(float sampleRate)
-	:
+JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleRate) :
+	m_parameters(parameters),
 	m_sampleRate(sampleRate),
 	m_childGrains(64),
 	m_samplesPerSpawn(4410),

@@ -13,11 +13,13 @@
 
 
 //==============================================================================
-HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor (HourglassGranularAudioProcessor& p)
-    :
-	AudioProcessorEditor (&p),
-	processor (p),
-	m_grainChannel1(500,150)
+HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(HourglassGranularAudioProcessor& p, AudioProcessorValueTreeState& vts)
+	:
+	AudioProcessorEditor(&p),
+	processor(p),
+	m_grainChannel1(vts),
+	m_effectComponent(&p),
+	m_valueTreeState(vts)
 {
 	m_grainChannel1.assignGrainProcessor(processor.getGranularProcessor());
 	m_effectComponent.assignGrainProcessor(processor.getGranularProcessor());

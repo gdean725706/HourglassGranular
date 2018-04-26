@@ -21,7 +21,7 @@
 class HourglassGranularAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener
 {
 public:
-    HourglassGranularAudioProcessorEditor (HourglassGranularAudioProcessor&);
+    HourglassGranularAudioProcessorEditor (HourglassGranularAudioProcessor& p, AudioProcessorValueTreeState& vts);
     ~HourglassGranularAudioProcessorEditor();
 
     //==============================================================================
@@ -34,6 +34,7 @@ private:
 	ScopedPointer<Slider> m_tempoDivision;
 	EffectControlComponent m_effectComponent;
 
+	AudioProcessorValueTreeState& m_valueTreeState;
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

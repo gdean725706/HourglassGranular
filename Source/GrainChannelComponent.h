@@ -178,13 +178,15 @@ class GrainChannelComponent : public GroupComponent, public Button::Listener, pu
 	
 	ScopedPointer<WavetableWidget> m_waveWidget;
 
+	AudioProcessorValueTreeState& m_valueTreeState;
+
 public:
-	GrainChannelComponent(int width, int height) :
+	GrainChannelComponent(AudioProcessorValueTreeState& vts) :
 		GroupComponent("grainChannel", "Grain Channel"),
 		m_grainProcessor(0),
 		m_thumbnailCache(5),
-		m_sampleThumbnail(512, m_formatManager, m_thumbnailCache)
-		
+		m_sampleThumbnail(512, m_formatManager, m_thumbnailCache),
+		m_valueTreeState(vts)
     {
 		auto* laf = &getLookAndFeel();
 		laf->setColour(Slider::textBoxOutlineColourId, Colours::transparentWhite);

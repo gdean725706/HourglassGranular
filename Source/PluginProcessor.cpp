@@ -24,12 +24,25 @@ HourglassGranularAudioProcessor::HourglassGranularAudioProcessor()
 #endif
 	),
 #endif
-	m_ampEnv(44100.0f, 0.0f, 1.0f, 1.0f, 1.0f)
+	m_parameters(*this, nullptr),
+	m_clouds(m_parameters),
+	m_ampEnv(44100.0f, 0.0f, 1.0f, 1.0f, 1.0f),
+	m_allpassLeft(44100.0f),
+	m_allpassRight(44100.0f),
+	m_allpassLeft2(44100.0f),
+	m_allpassRight2(44100.0f),
+	m_apFreq(1000.0f),
+	m_apQ(1.0f)	
 {
 	m_ampEnv.setAttack(0.01f);
 	m_ampEnv.setDecay(0.1f);
 	m_ampEnv.setRelease(0.1f);
 	m_ampEnv.setSustain(1.0f);
+
+	m_allpassLeft.createAllPass(1000.0f, 1.0f);
+	m_allpassRight.createAllPass(1000.0f, 1.0f);
+	m_allpassLeft2.createAllPass(2000.0f, 1.0f);
+	m_allpassRight2.createAllPass(2000.0f, 1.0f);
 }
 
 HourglassGranularAudioProcessor::~HourglassGranularAudioProcessor()
@@ -103,6 +116,10 @@ void HourglassGranularAudioProcessor::prepareToPlay (double sampleRate, int samp
 {
 	m_clouds.setSampleRate(sampleRate);
 	m_ampEnv.setSampleRate(sampleRate);
+	m_allpassLeft.setSampleRate(sampleRate);
+	m_allpassRight.setSampleRate(sampleRate);
+	m_allpassLeft2.setSampleRate(sampleRate);
+	m_allpassRight2.setSampleRate(sampleRate);
 }
 
 void HourglassGranularAudioProcessor::releaseResources()
@@ -163,6 +180,11 @@ void HourglassGranularAudioProcessor::processBlock (AudioSampleBuffer& buffer, M
 	}
 
 	m_clouds.process(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
+
+	m_allpassLeft.process(buffer.getWritePointer(0), buffer.getNumSamples());
+	m_allpassRight.process(buffer.getWritePointer(1), buffer.getNumSamples());
+	m_allpassLeft2.process(buffer.getWritePointer(0), buffer.getNumSamples());
+	m_allpassRight2.process(buffer.getWritePointer(1), buffer.getNumSamples());
 	
 	return;
 
@@ -185,7 +207,7 @@ bool HourglassGranularAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* HourglassGranularAudioProcessor::createEditor()
 {
-    return new HourglassGranularAudioProcessorEditor (*this);
+    return new HourglassGranularAudioProcessorEditor (*this, m_parameters);
 }
 
 //==============================================================================
@@ -206,6 +228,24 @@ JuicyClouds* HourglassGranularAudioProcessor::getGranularProcessor()
 {
 	return &m_clouds;
 } 
+
+void HourglassGranularAudioProcessor::setAllPassFreq(float freq)
+{
+	m_apFreq = freq;
+	m_allpassLeft.createAllPass(m_apFreq, m_apQ);
+	m_allpassRight.createAllPass(m_apFreq, m_apQ);
+	m_allpassLeft2.createAllPass(m_apFreq + 500, m_apQ);
+	m_allpassRight2.createAllPass(m_apFreq + 500, m_apQ);
+}
+
+void HourglassGranularAudioProcessor::setAllPassQ(float freq)
+{
+	m_apQ = freq;
+	m_allpassLeft.createAllPass(m_apFreq, m_apQ);
+	m_allpassRight.createAllPass(m_apFreq, m_apQ);
+	m_allpassLeft2.createAllPass(m_apFreq + 500, m_apQ);
+	m_allpassRight2.createAllPass(m_apFreq + 500, m_apQ);
+}
 
 //==============================================================================
 // This creates new instances of the plugin..

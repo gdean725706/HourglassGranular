@@ -23,11 +23,17 @@ private:
 	ScopedPointer<Slider> m_feedbackSlider;
 	ScopedPointer<Label> m_feedbackLabel;
 
+	ScopedPointer<Slider> m_phaseSlider;
+	ScopedPointer<Slider> m_phaseQSlider;
+
+	HourglassGranularAudioProcessor* m_processor;
 	JuicyClouds* m_grainProcessor;
 
 public:
-    EffectControlComponent() 
-    {
+	EffectControlComponent(HourglassGranularAudioProcessor* p) :
+		m_processor(p)
+	{
+
 		m_randomPanningSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_randomPanningSlider->setRange(0.0, 1.0, 0.01);
 		m_randomPanningSlider->setTextBoxIsEditable(true);
@@ -45,6 +51,18 @@ public:
 		m_feedbackLabel = new Label("lblFeedback", "feedback");
 		m_feedbackLabel->attachToComponent(m_feedbackSlider, false);
 		m_feedbackLabel->setJustificationType(Justification::centred);
+
+		m_phaseSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
+		m_phaseSlider->setRange(30.0, 10000.0, 0.01);
+		m_phaseSlider->setTextBoxIsEditable(true);
+		m_phaseSlider->addListener(this);
+		addAndMakeVisible(m_phaseSlider);
+
+		m_phaseQSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
+		m_phaseQSlider->setRange(0.25, 8, 0.01);
+		m_phaseQSlider->setTextBoxIsEditable(true);
+		m_phaseQSlider->addListener(this);
+		addAndMakeVisible(m_phaseQSlider);
     }
 
     ~EffectControlComponent()
@@ -72,9 +90,12 @@ public:
 
 		m_randomPanningSlider->setBounds(bounds.removeFromLeft(100));
 		m_feedbackSlider->setBounds(bounds.removeFromLeft(100));
+		m_phaseSlider->setBounds(bounds.removeFromRight(100));
+		m_phaseQSlider->setBounds(bounds.removeFromRight(100));
 
 		m_randomPanLabel->setBounds(labelBar.removeFromLeft(100));
 		m_feedbackLabel->setBounds(labelBar.removeFromLeft(100));
+		
 
     }
 	void sliderValueChanged(Slider* slider) override
@@ -89,9 +110,16 @@ public:
 			{
 
 			}
+			else if (slider == m_phaseSlider)
+			{
+				m_processor->setAllPassFreq(m_phaseSlider->getValue());
+			}
+			else if (slider == m_phaseQSlider)
+			{
+				m_processor->setAllPassQ(m_phaseQSlider->getValue());
+			}
 		}
 	}
-
 	void assignGrainProcessor(JuicyClouds* processor)
 	{
 		m_grainProcessor = processor;

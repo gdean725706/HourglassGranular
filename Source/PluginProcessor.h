@@ -13,7 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "JuicyClouds.h"
 #include "EnvelopeGenerator.h"
-
+#include "BiQuad.h"
 
 //==============================================================================
 /**
@@ -60,11 +60,20 @@ public:
 
 	JuicyClouds* getGranularProcessor();
 
+	void setAllPassFreq(float freq); 
+	void setAllPassQ(float q);
+
 
 private:
+	AudioProcessorValueTreeState m_parameters;
 	JuicyClouds m_clouds;
 
 	EnvelopeGenerator m_ampEnv;
+
+	BiQuad m_allpassLeft, m_allpassRight;
+	BiQuad m_allpassLeft2, m_allpassRight2;
+	float m_apFreq, m_apQ;
+
 
 	//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HourglassGranularAudioProcessor)

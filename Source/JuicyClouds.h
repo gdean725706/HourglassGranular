@@ -17,6 +17,8 @@ typedef std::vector<Grain> GrainVector;
 
 class JuicyClouds
 {
+	AudioProcessorValueTreeState& m_parameters;
+
 	float m_sampleRate;
 	GrainVector m_childGrains;
 	int m_samplesPerSpawn, m_samplesUntilSpawn;
@@ -38,7 +40,7 @@ class JuicyClouds
 	float m_pitchOffset;
 
 public:
-	JuicyClouds(float sampleRate = 44100.0f);
+	JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleRate = 44100.0f);
 	void setSampleRate(float samplerate);
 
 	void process(float* leftChannel, float* rightChannel, int blockSize);
