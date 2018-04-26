@@ -30,9 +30,13 @@ class JuicyClouds
 
 	Phasor m_playbackPhasor;
 
-	float m_grainSizeMultiplier, m_startPosition, m_pitchRandomness, m_startRandomness;
+	float* m_grainSizeMultiplier = nullptr;
+	float* m_startPosition = nullptr;
+	float* m_blendAmount = nullptr;
+	float* m_startRandomness = nullptr;
+
+	float m_pitchRandomness;
 	float m_masterPitch;
-	float m_blendAmount;
 	float m_panningRandomness;
 
 	float m_bpm;
@@ -51,12 +55,8 @@ public:
 	void setAudioSample(int index, float value);
 	void calculatePhasorSpeed();
 
-	void setGrainSizeMultiplier(float amount);
-	void setStartPosition(float position);
 	void setPitchRandomness(float amount);
-	void setStartRandomness(float amount);
 	void setPitch(float pitch);
-	void setWindowBlendAmount(float amount);
 	void setPanningRandomness(float amount);
 
 	void calculateSamplesPerStep();

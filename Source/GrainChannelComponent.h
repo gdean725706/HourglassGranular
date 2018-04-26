@@ -152,35 +152,13 @@ public:
 */
 class GrainChannelComponent : public GroupComponent, public Button::Listener, public Slider::Listener, public ChangeListener, public Label::Listener
 {
-	JuicyClouds* m_grainProcessor;
-	
-	// UI Components
-	ScopedPointer<TextButton> m_loadSampleButton;
 
-	ScopedPointer<Slider> m_startPositionSlider;
-	ScopedPointer<Slider> m_grainSizeSlider;
-	ScopedPointer<Slider> m_pitchRandomnessSlider;
-	ScopedPointer<Slider> m_startRandomnessSlider;
-	ScopedPointer<Slider> m_mainPitchSlider;
-	ScopedPointer<Slider> m_windowBlendSlider;
-
-	ScopedPointer<Label> m_startPosLabel;
-	ScopedPointer<Label> m_grainSizeLabel;
-	ScopedPointer<Label> m_pitchRandomnessLabel;
-	ScopedPointer<Label> m_startRandomnessLabel;
-	ScopedPointer<Label> m_mainPitchLabel;
-	ScopedPointer<Label> m_windowBlendLabel;
-
-	AudioFormatManager m_formatManager;
-	
-	AudioThumbnailCache m_thumbnailCache;
-	AudioThumbnail m_sampleThumbnail;
-	
-	ScopedPointer<WavetableWidget> m_waveWidget;
-
-	AudioProcessorValueTreeState& m_valueTreeState;
 
 public:
+	
+	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+	typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
+
 	GrainChannelComponent(AudioProcessorValueTreeState& vts) :
 		GroupComponent("grainChannel", "Grain Channel"),
 		m_grainProcessor(0),
@@ -213,6 +191,7 @@ public:
 		m_startPosLabel->setJustificationType(Justification::centred);
 		addAndMakeVisible(m_startPosLabel);
 		m_startPosLabel->attachToComponent(m_startPositionSlider, false);
+		m_startPositionAttachment.reset(new SliderAttachment(m_valueTreeState, "grainStartPosition", *m_startPositionSlider));
 
 		m_grainSizeSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_grainSizeSlider->setName("Grain Size");
@@ -224,6 +203,7 @@ public:
 		m_grainSizeLabel->setJustificationType(Justification::centred);
 		addAndMakeVisible(m_grainSizeLabel);
 		m_grainSizeLabel->attachToComponent(m_grainSizeSlider, false);
+		m_grainSizeAttachment.reset(new SliderAttachment(m_valueTreeState, "grainSizeMultiplier", *m_grainSizeSlider));
 
 		m_mainPitchSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_mainPitchSlider->setName("Pitch");
@@ -235,6 +215,7 @@ public:
 		m_mainPitchLabel->setJustificationType(Justification::centred);
 		addAndMakeVisible(m_mainPitchLabel);
 		m_mainPitchLabel->attachToComponent(m_mainPitchSlider, false);
+		m_mainPitchAttachment.reset(new SliderAttachment(m_valueTreeState, "pitchShiftFrequency", *m_mainPitchSlider));
 
 		m_pitchRandomnessSlider = new Slider(Slider::SliderStyle::RotaryVerticalDrag, Slider::TextEntryBoxPosition::TextBoxBelow);
 		m_pitchRandomnessSlider->setName("Random Pitch");
@@ -257,6 +238,7 @@ public:
 		m_startRandomnessLabel->setJustificationType(Justification::centred);
 		addAndMakeVisible(m_startRandomnessLabel);
 		m_startRandomnessLabel->attachToComponent(m_startRandomnessSlider, false);
+		m_startRandomAttachment.reset(new SliderAttachment(m_valueTreeState, "startRandomness", *m_startRandomnessSlider));
 
 		m_windowBlendSlider = new Slider(Slider::SliderStyle::LinearVertical, Slider::TextEntryBoxPosition::NoTextBox);
 		m_windowBlendSlider->setName("Window Blend");
@@ -268,6 +250,7 @@ public:
 		m_windowBlendLabel->setJustificationType(Justification::centred);
 		addAndMakeVisible(m_windowBlendLabel);
 		m_windowBlendLabel->attachToComponent(m_windowBlendSlider, false);
+		m_blendAttachment.reset(new SliderAttachment(m_valueTreeState, "windowBlend", *m_windowBlendSlider));
 
 
 		// Audio Thumbnail
@@ -401,11 +384,9 @@ public:
 
 		if (slider == m_grainSizeSlider)
 		{
-			m_grainProcessor->setGrainSizeMultiplier(m_grainSizeSlider->getValue());
 		}
 		else if (slider == m_startPositionSlider)
 		{
-			m_grainProcessor->setStartPosition(m_startPositionSlider->getValue());
 		}
 		else if (slider == m_pitchRandomnessSlider)
 		{
@@ -413,7 +394,6 @@ public:
 		}
 		else if (slider == m_startRandomnessSlider)
 		{
-			m_grainProcessor->setStartRandomness(m_startPositionSlider->getValue());
 		}
 		else if (slider == m_mainPitchSlider)
 		{
@@ -421,7 +401,6 @@ public:
 		}
 		else if (slider == m_windowBlendSlider)
 		{
-			m_grainProcessor->setWindowBlendAmount(m_windowBlendSlider->getValue());
 			m_waveWidget->setBlendAmount(m_windowBlendSlider->getValue());
 		}
 	}
@@ -440,5 +419,38 @@ public:
 	}
 
 private:
+	JuicyClouds* m_grainProcessor;
+
+	// UI Components
+	ScopedPointer<TextButton> m_loadSampleButton;
+
+	ScopedPointer<Slider> m_startPositionSlider;
+	std::unique_ptr<SliderAttachment> m_startPositionAttachment;
+	ScopedPointer<Slider> m_grainSizeSlider;
+	std::unique_ptr<SliderAttachment> m_grainSizeAttachment;
+	ScopedPointer<Slider> m_pitchRandomnessSlider;
+	ScopedPointer<Slider> m_startRandomnessSlider;
+	std::unique_ptr<SliderAttachment> m_startRandomAttachment;
+	ScopedPointer<Slider> m_mainPitchSlider;
+	std::unique_ptr<SliderAttachment> m_mainPitchAttachment;
+	ScopedPointer<Slider> m_windowBlendSlider;
+	std::unique_ptr<SliderAttachment> m_blendAttachment;
+
+	ScopedPointer<Label> m_startPosLabel;
+	ScopedPointer<Label> m_grainSizeLabel;
+	ScopedPointer<Label> m_pitchRandomnessLabel;
+	ScopedPointer<Label> m_startRandomnessLabel;
+	ScopedPointer<Label> m_mainPitchLabel;
+	ScopedPointer<Label> m_windowBlendLabel;
+
+	AudioFormatManager m_formatManager;
+
+	AudioThumbnailCache m_thumbnailCache;
+	AudioThumbnail m_sampleThumbnail;
+
+	ScopedPointer<WavetableWidget> m_waveWidget;
+
+	AudioProcessorValueTreeState& m_valueTreeState;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GrainChannelComponent)
 };

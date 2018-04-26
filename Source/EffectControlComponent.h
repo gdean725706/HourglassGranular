@@ -17,19 +17,10 @@
 */
 class EffectControlComponent    : public Component, public Slider::Listener
 {
-private:
-	ScopedPointer<Slider> m_randomPanningSlider;
-	ScopedPointer<Label> m_randomPanLabel;
-	ScopedPointer<Slider> m_feedbackSlider;
-	ScopedPointer<Label> m_feedbackLabel;
-
-	ScopedPointer<Slider> m_phaseSlider;
-	ScopedPointer<Slider> m_phaseQSlider;
-
-	HourglassGranularAudioProcessor* m_processor;
-	JuicyClouds* m_grainProcessor;
-
 public:
+	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+	typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
+
 	EffectControlComponent(HourglassGranularAudioProcessor* p) :
 		m_processor(p)
 	{
@@ -126,5 +117,18 @@ public:
 	}
 
 private:
+
+	ScopedPointer<Slider> m_randomPanningSlider;
+	ScopedPointer<Label> m_randomPanLabel;
+	ScopedPointer<Slider> m_feedbackSlider;
+	ScopedPointer<Label> m_feedbackLabel;
+
+	ScopedPointer<Slider> m_phaseSlider;
+	ScopedPointer<Slider> m_phaseQSlider;
+
+	HourglassGranularAudioProcessor* m_processor;
+	JuicyClouds* m_grainProcessor;
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EffectControlComponent)
 };

@@ -22,12 +22,8 @@ JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleR
 	m_audioTable((int)sampleRate),
 	m_running(false),
 	m_phasorSpeed(1),
-	m_grainSizeMultiplier(0.05f),
-	m_startPosition(0),
 	m_pitchRandomness(0),
-	m_startRandomness(0),
 	m_masterPitch(0),
-	m_blendAmount(0),
 	m_panningRandomness(0),
 	m_bpm(120.0f),
 	m_division(1),
@@ -41,6 +37,44 @@ JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleR
 	setGrainPitch(1);
 	calculateSamplesPerStep();
 
+	parameters.createAndAddParameter(
+		"grainSizeMultiplier",
+		"Grain Size Multiplier",
+		"grain size",
+		NormalisableRange<float>(0.01, 2.0, 0.001),
+		1.0,
+		nullptr, nullptr);
+
+	parameters.createAndAddParameter(
+		"grainStartPosition",
+		"Grain Start Position",
+		"start",
+		NormalisableRange<float>(0.0, 1.0, 0.001),
+		0,
+		nullptr, nullptr);
+
+	parameters.createAndAddParameter(
+		"startRandomness",
+		"Random Start",
+		"random start",
+		NormalisableRange<float>(0.0, 1.0, 0.001),
+		0,
+		nullptr, nullptr);
+
+	parameters.createAndAddParameter(
+		"windowBlend",
+		"Window Blend",
+		"blend",
+		NormalisableRange<float>(0.0, 1.0, 0.001),
+		0,
+		nullptr, nullptr);
+
+	//parameters.state = ValueTree(Identifier("HourglassGranular"));
+
+	m_grainSizeMultiplier = parameters.getRawParameterValue("grainSizeMultiplier");
+	m_startPosition = parameters.getRawParameterValue("grainStartPosition");
+	m_startRandomness = parameters.getRawParameterValue("startRandomness");
+	m_blendAmount = parameters.getRawParameterValue("windowBlend");
 }
 
 
@@ -56,7 +90,7 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 {
 	if (m_running)
 	{
-		float start((m_startPosition * 2.0f) * m_audioTable.getSize());
+		float start((*m_startPosition * 2.0f) * m_audioTable.getSize());
 		// iterate over children
 		for (int n = 0; n < blockSize; ++n)
 		{
@@ -67,9 +101,9 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 
 				for (int child = 0; child < m_childGrains.size(); ++child)
 				{
-					if (m_startPosition > 0.5f)
+					if (*m_startPosition > 0.5f)
 					{
-						start = m_playbackPhasor.getPhase() * (m_audioTable.getSize() * ((m_startPosition * 2.0f) - 1.0f));
+						start = m_playbackPhasor.getPhase() * (m_audioTable.getSize() * ((*m_startPosition * 2.0f) - 1.0f));
 					}
 
 					if (m_childGrains[child].alive() == false && spawned == false)
@@ -79,13 +113,13 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 							&m_triwTable,
 							&m_sineTable,
 							m_sampleRate,
-							m_sampleRate * m_grainSizeMultiplier, // duration samples
+							m_sampleRate * *m_grainSizeMultiplier, // duration samples
 							start, //m_playbackPhasor.getPhase() * m_audioTable.getSize() , // start position (phasor this?)
-							m_masterPitch + m_pitchOffset, // pitch
-							m_startRandomness, // random start amount
+							m_masterPitch, // pitch
+							*m_startRandomness, // random start amount
 							m_pitchRandomness,// random pitch amount
 							0.3f, // Gain
-							m_blendAmount,
+							*m_blendAmount,
 							m_panningRandomness); // Blend amount
 						
 						spawned = true;
@@ -130,34 +164,15 @@ void JuicyClouds::calculatePhasorSpeed()
 	m_phasorSpeed = m_sampleRate / m_audioTable.getSize();
 }
 
-void JuicyClouds::setGrainSizeMultiplier(float multiplier)
-{
-	m_grainSizeMultiplier = multiplier;
-}
-
-void JuicyClouds::setStartPosition(float position)
-{
-	m_startPosition = position;
-}
-
 void JuicyClouds::setPitchRandomness(float amount)
 {
 	m_pitchRandomness = amount;
 }
 
-void JuicyClouds::setStartRandomness(float amount)
-{
-	m_startRandomness = amount;
-}
 
 void JuicyClouds::setPitch(float pitch)
 {
 	m_pitchOffset = pitch;
-}
-
-void JuicyClouds::setWindowBlendAmount(float amount)
-{
-	m_blendAmount = amount;
 }
 
 void JuicyClouds::setPanningRandomness(float amount)

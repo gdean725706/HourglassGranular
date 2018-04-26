@@ -28,6 +28,7 @@
         <FILE id="r7y6Qi" name="JuicyClouds.h" compile="0" resource="0" file="Source/JuicyClouds.h"/>
         <FILE id="v9zLh1" name="PhaseShifter.h" compile="0" resource="0" file="Source/PhaseShifter.h"/>
         <FILE id="LA2GzW" name="Phasor.h" compile="0" resource="0" file="Source/Phasor.h"/>
+        <FILE id="Xxj4ZE" name="PitchShifter.h" compile="0" resource="0" file="Source/PitchShifter.h"/>
         <FILE id="FkqC0F" name="PluginProcessor.cpp" compile="1" resource="0"
               file="Source/PluginProcessor.cpp"/>
         <FILE id="sXQ7bG" name="PluginProcessor.h" compile="0" resource="0"

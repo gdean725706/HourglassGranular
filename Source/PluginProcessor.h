@@ -14,6 +14,7 @@
 #include "JuicyClouds.h"
 #include "EnvelopeGenerator.h"
 #include "BiQuad.h"
+#include "PitchShifter.h"
 
 //==============================================================================
 /**
@@ -74,6 +75,7 @@ private:
 	BiQuad m_allpassLeft2, m_allpassRight2;
 	float m_apFreq, m_apQ;
 
+	PitchShifter m_pitchShifter;
 
 	//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HourglassGranularAudioProcessor)

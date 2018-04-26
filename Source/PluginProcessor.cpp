@@ -32,7 +32,8 @@ HourglassGranularAudioProcessor::HourglassGranularAudioProcessor()
 	m_allpassLeft2(44100.0f),
 	m_allpassRight2(44100.0f),
 	m_apFreq(1000.0f),
-	m_apQ(1.0f)	
+	m_apQ(1.0f),
+	m_pitchShifter(m_parameters)
 {
 	m_ampEnv.setAttack(0.01f);
 	m_ampEnv.setDecay(0.1f);
@@ -43,6 +44,10 @@ HourglassGranularAudioProcessor::HourglassGranularAudioProcessor()
 	m_allpassRight.createAllPass(1000.0f, 1.0f);
 	m_allpassLeft2.createAllPass(2000.0f, 1.0f);
 	m_allpassRight2.createAllPass(2000.0f, 1.0f);
+
+
+	m_parameters.state = ValueTree(Identifier("HourglassGranular"));
+
 }
 
 HourglassGranularAudioProcessor::~HourglassGranularAudioProcessor()
@@ -120,12 +125,13 @@ void HourglassGranularAudioProcessor::prepareToPlay (double sampleRate, int samp
 	m_allpassRight.setSampleRate(sampleRate);
 	m_allpassLeft2.setSampleRate(sampleRate);
 	m_allpassRight2.setSampleRate(sampleRate);
+
+	m_pitchShifter.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void HourglassGranularAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+	m_pitchShifter.releaseResources();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -186,6 +192,8 @@ void HourglassGranularAudioProcessor::processBlock (AudioSampleBuffer& buffer, M
 	m_allpassLeft2.process(buffer.getWritePointer(0), buffer.getNumSamples());
 	m_allpassRight2.process(buffer.getWritePointer(1), buffer.getNumSamples());
 	
+	m_pitchShifter.processBlock(buffer, midiMessages);
+
 	return;
 
 	for (int n = 0; n < buffer.getNumSamples(); ++n)
@@ -213,15 +221,17 @@ AudioProcessorEditor* HourglassGranularAudioProcessor::createEditor()
 //==============================================================================
 void HourglassGranularAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+	auto state = m_parameters.state;
+	std::unique_ptr<XmlElement> xml(state.createXml());
+	copyXmlToBinary(*xml, destData);
 }
 
 void HourglassGranularAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+	std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+	if (xmlState.get() != nullptr)
+		if (xmlState->hasTagName(m_parameters.state.getType()))
+			m_parameters.state = ValueTree::fromXml(*xmlState);
 }
 
 JuicyClouds* HourglassGranularAudioProcessor::getGranularProcessor()
