@@ -101,13 +101,13 @@ public:
 
 		m_randomPanningSlider->setBounds(bounds.removeFromLeft(100));
 		m_feedbackSlider->setBounds(bounds.removeFromLeft(100));
-		m_phaserDepthSlider->setBounds(bounds.removeFromRight(	75));
-		m_phaseSpeedSlider->setBounds(bounds.removeFromRight(	75));
-		m_phaseQSlider->setBounds(bounds.removeFromRight(		75));
+		m_phaserDepthSlider->setBounds(bounds.removeFromRight(	100));
+		m_phaseSpeedSlider->setBounds(bounds.removeFromRight(	100));
+		m_phaseQSlider->setBounds(bounds.removeFromRight(		100));
 
-		//m_phaseDepthLabel->setBounds(labelBar.removeFromRight(100));
-		//m_phaseSpeedLabel->setBounds(labelBar.removeFromRight(100));
-		//m_phaseQLabel->setBounds(labelBar.removeFromRight(100));
+		m_phaseDepthLabel->setBounds(labelBar.removeFromRight(100));
+		m_phaseSpeedLabel->setBounds(labelBar.removeFromRight(100));
+		m_phaseQLabel->setBounds(labelBar.removeFromRight(100));
 
 		m_randomPanLabel->setBounds(labelBar.removeFromLeft(100));
 		m_feedbackLabel->setBounds(labelBar.removeFromLeft(100));

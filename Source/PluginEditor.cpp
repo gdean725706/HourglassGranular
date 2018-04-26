@@ -36,6 +36,8 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 	laf->setColour(Slider::textBoxTextColourId, getLookAndFeel().findColour(Slider::rotarySliderFillColourId));
 	laf->setColour(Label::backgroundWhenEditingColourId, Colours::grey);
 	laf->setColour(Label::textColourId, laf->findColour(Slider::rotarySliderFillColourId));
+	laf->setColour(ToggleButton::textColourId, laf->findColour(Slider::rotarySliderFillColourId));
+	laf->setColour(ToggleButton::tickColourId, laf->findColour(Slider::rotarySliderFillColourId));
 
 	m_masterTempoSlider = new Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxAbove);
 	m_masterTempoSlider->setName("Master Tempo");
@@ -58,6 +60,12 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 	m_tempoDivision->setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxAbove, false, 100, 20);
 	addAndMakeVisible(m_tempoDivision);
 	m_tempoDivisionAttachment.reset(new SliderAttachment(m_valueTreeState, "tempoDivision", *m_tempoDivision));
+
+	m_midiTrigger = new ToggleButton("MIDI");
+	m_midiTrigger->addListener(this);
+	addAndMakeVisible(m_midiTrigger);
+	m_midiTrigAttach.reset(new ButtonAttachment(m_valueTreeState, "midiToggle", *m_midiTrigger));
+	m_midiTrigger->setButtonText("MIDI");
 
 	addAndMakeVisible(m_effectComponent);
 
@@ -95,6 +103,7 @@ void HourglassGranularAudioProcessorEditor::resized()
 	auto settingsBar = windowSize.removeFromTop(50);
 	m_masterTempoSlider->setBounds(settingsBar.removeFromRight(100));
 	m_tempoDivision->setBounds(settingsBar.removeFromRight(100));
+	m_midiTrigger->setBounds(settingsBar.removeFromRight(65));
 	m_grainChannel1.setBounds(windowSize.removeFromTop(200).reduced(5));
 
 	m_effectComponent.setBounds(windowSize.removeFromTop(100).reduced(5));
@@ -110,6 +119,11 @@ void HourglassGranularAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	else if (slider == m_tempoDivision)
 	{
 	}
+}
+
+void HourglassGranularAudioProcessorEditor::buttonClicked(Button* button)
+{
+
 }
 
 

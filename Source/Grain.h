@@ -164,7 +164,8 @@ public:
 		}
 		else
 		{
-			amp = 1.0f;
+			float hann = m_hannWindow->getSample(grainPos01 * (float)m_hannWindow->getSize());
+			amp = lerp(1.0f, hann, (m_blendAmount * 4.0f) - 0.75f);
 		}
 
 		m_currentOutput = m_audio->getSample(m_startPosition + float(m_phasor.getPhase() * m_audio->getSize())) * amp;

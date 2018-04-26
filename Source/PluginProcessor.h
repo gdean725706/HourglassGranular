@@ -80,6 +80,8 @@ private:
 
 	PhaseShifter m_phaseShifter;
 
+	float* m_midiToggle = nullptr;
+
 	//File* m_audioFile;
 
 	//==============================================================================

@@ -69,7 +69,8 @@ public:
 			}
 			else
 			{
-				v = 1.0f;
+				float hann = m_hannWindow[i * inc];
+				v = lerp(1.0f, hann, (m_blendAmount * 4.0f) - 3);
 			}
 
 			//float v = lerp(m_windowTable[i * inc], m_blendTable[i * inc], m_blendAmount);
@@ -305,6 +306,9 @@ public:
 		{
 			g.setColour(getLookAndFeel().findColour(Slider::rotarySliderFillColourId));
 			m_sampleThumbnail.drawChannel(g, thumb.reduced(3), 0.0f, m_sampleThumbnail.getTotalLength(), 0, 1.0f);
+			//auto x = thumb.getRelativePoint(((float)m_startPositionSlider->getValue() * 0.5f), 1.0f).x;
+			//g.drawRect(x, thumb.getY() + thumb.getHeight(), 1, thumb.getHeight() - 5, 1);
+			//g.drawRect((thumb.getRelativePoint((m_startPositionSlider->getValue() * 0.5f), 1.0f). 
 		}
 		else
 		{

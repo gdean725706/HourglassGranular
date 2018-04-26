@@ -18,7 +18,7 @@
 //==============================================================================
 /**
 */
-class HourglassGranularAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener
+class HourglassGranularAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener, public Button::Listener
 {
 public:
     HourglassGranularAudioProcessorEditor (HourglassGranularAudioProcessor& p, AudioProcessorValueTreeState& vts);
@@ -27,10 +27,12 @@ public:
     //==============================================================================
 
 	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+	typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
 	void paint (Graphics&) override;
     void resized() override;
-	void sliderValueChanged(Slider* slider) override;
+	void sliderValueChanged(Slider* slider) override; 
+	void buttonClicked(Button* button) override;
 private:
 	GrainChannelComponent m_grainChannel1;
 	ScopedPointer<Slider> m_masterTempoSlider;
@@ -40,6 +42,8 @@ private:
 	std::unique_ptr<SliderAttachment> m_masterTempoAttachment;
 	std::unique_ptr<SliderAttachment> m_tempoDivisionAttachment;
 
+	ScopedPointer<ToggleButton> m_midiTrigger;
+	std::unique_ptr<ButtonAttachment> m_midiTrigAttach;
 
 	AudioProcessorValueTreeState& m_valueTreeState;
 

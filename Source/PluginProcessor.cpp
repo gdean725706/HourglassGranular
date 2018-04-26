@@ -46,6 +46,16 @@ HourglassGranularAudioProcessor::HourglassGranularAudioProcessor()
 	m_allpassLeft2.createAllPass(2000.0f, 1.0f);
 	m_allpassRight2.createAllPass(2000.0f, 1.0f);
 
+	m_parameters.createAndAddParameter(
+		"midiToggle",
+		"MIDI Toggle",
+		"MIDI Toggle",
+		NormalisableRange<float>(0.0f, 1.0f, 1.0f),
+		0.0f,
+		nullptr, nullptr);
+
+	m_midiToggle = m_parameters.getRawParameterValue("midiToggle");
+
 
 	m_parameters.state = ValueTree(Identifier("HourglassGranular"));
 
@@ -198,7 +208,7 @@ void HourglassGranularAudioProcessor::processBlock (AudioSampleBuffer& buffer, M
 
 	m_phaseShifter.process(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
 
-	return;
+	if (*m_midiToggle == 0.0f) return;
 
 	for (int n = 0; n < buffer.getNumSamples(); ++n)
 	{
