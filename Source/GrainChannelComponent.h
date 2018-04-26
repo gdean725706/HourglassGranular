@@ -323,7 +323,7 @@ public:
 		auto bounds = getLocalBounds();
 
 		auto sliderBar = bounds.removeFromTop(getHeight() * 0.65f);
-		auto sliderBarWidth = getWidth() * 0.75f;
+		auto sliderBarWidth = getWidth() * 0.8f;
 		auto sliderRight = sliderBar.removeFromRight(sliderBarWidth);
 		auto labelbar = sliderRight.removeFromTop(sliderRight.getHeight() * 0.15f);
 
@@ -445,7 +445,7 @@ public:
 				}
 				else
 				{
-					AlertWindow::showMessageBox(AlertWindow::AlertIconType::WarningIcon, "hourglass", ("Could not locate sample " + property.toString()), "OK", this);
+					AlertWindow::showMessageBox(AlertWindow::AlertIconType::WarningIcon, "hourglass", ("Could not locate sample " + s.trim()), "OK", this);
 				}
 			}
 		//}

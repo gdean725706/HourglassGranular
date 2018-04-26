@@ -197,7 +197,14 @@ void HourglassGranularAudioProcessor::processBlock (AudioSampleBuffer& buffer, M
 		}
 	}
 
-	m_clouds.process(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
+	AudioPlayHead* playhead = nullptr;
+
+	if (*m_midiToggle == 1.0f)
+	{
+		playhead = getPlayHead();
+	}
+
+	m_clouds.process(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples(), playhead);
 
 	//m_allpassLeft.process(buffer.getWritePointer(0), buffer.getNumSamples());
 	//m_allpassRight.process(buffer.getWritePointer(1), buffer.getNumSamples());

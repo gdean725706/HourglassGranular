@@ -14,6 +14,7 @@
 #include "PluginProcessor.h"
 #include "GrainChannelComponent.h"
 #include "EffectControlComponent.h"
+#include "CustomLookAndFeel.h"
 
 //==============================================================================
 /**
@@ -50,6 +51,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     HourglassGranularAudioProcessor& processor;
+
+	CustomLookAndFeel m_customLook;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HourglassGranularAudioProcessorEditor)
 };

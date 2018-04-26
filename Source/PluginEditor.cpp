@@ -24,6 +24,8 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 	m_grainChannel1.assignGrainProcessor(processor.getGranularProcessor());
 	m_effectComponent.assignGrainProcessor(processor.getGranularProcessor());
 
+	setLookAndFeel(&m_customLook);
+
 	// Use light colour scheme for a change
 	if (auto v4 = dynamic_cast<LookAndFeel_V4*> (&getLookAndFeel()))
 	{
@@ -52,7 +54,7 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 
 	m_tempoDivision = new Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxAbove);
 	m_tempoDivision->setName("Tempo Division");
-	m_tempoDivision->setRange(0.25, 8.0, 0.25);
+	m_tempoDivision->setRange(0.25, 16.0, 0.25);
 	m_tempoDivision->setTextBoxIsEditable(true);
 	m_tempoDivision->addListener(this);
 	m_tempoDivision->setTextValueSuffix("DIV");
@@ -65,17 +67,16 @@ HourglassGranularAudioProcessorEditor::HourglassGranularAudioProcessorEditor(Hou
 	m_midiTrigger->addListener(this);
 	addAndMakeVisible(m_midiTrigger);
 	m_midiTrigAttach.reset(new ButtonAttachment(m_valueTreeState, "midiToggle", *m_midiTrigger));
-	m_midiTrigger->setButtonText("MIDI");
+	m_midiTrigger->setButtonText("Ext");
 
 	addAndMakeVisible(m_effectComponent);
 
     setSize (600, 350);
-	setResizable(true, true);
 }
 
 HourglassGranularAudioProcessorEditor::~HourglassGranularAudioProcessorEditor()
 {
-
+	setLookAndFeel(nullptr);
 }
 
 //==============================================================================

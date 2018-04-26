@@ -88,7 +88,7 @@ JuicyClouds::JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleR
 		"tempoDivision",
 		"Tempo Division",
 		"div",
-		NormalisableRange<float>(0.25, 8.0, 0.25),
+		NormalisableRange<float>(0.25, 16.0, 0.25),
 		1.0f,
 		nullptr, nullptr);
 
@@ -125,12 +125,23 @@ void JuicyClouds::setSampleRate(float sampleRate)
 	m_playbackPhasor.setSampleRate(sampleRate);
 }
 
-void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize)
+void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize, AudioPlayHead* playhead)
 {
 	if (m_running)
 	{
 		float start((*m_startPosition * 2.0f) * m_audioTable.getSize());
-		// iterate over children
+
+		if (playhead != nullptr)
+		{
+			AudioPlayHead::CurrentPositionInfo info;
+			playhead->getCurrentPosition(info);
+
+			if (info.bpm != 0)
+				setBPM(info.bpm);
+
+		}
+
+		// Iterate thru grains
 		for (int n = 0; n < blockSize; ++n)
 		{
 			if (m_samplesUntilSpawn <= 0)
@@ -140,9 +151,12 @@ void JuicyClouds::process(float* leftChannel, float* rightChannel, int blockSize
 
 				for (int child = 0; child < m_childGrains.size(); ++child)
 				{
+					Random r;
+					float rStart = *m_startPosition * (r.nextFloat() * *m_startRandomness);
+
 					if (*m_startPosition > 0.5f)
 					{
-						start = m_playbackPhasor.getPhase() * (m_audioTable.getSize() * ((*m_startPosition * 2.0f) - 1.0f));
+						start = m_playbackPhasor.getPhase() * (m_audioTable.getSize() * ((rStart * 2.0f) - 1.0f));
 					}
 
 					if (m_childGrains[child].alive() == false && spawned == false)
@@ -212,7 +226,7 @@ void JuicyClouds::setPitch(float pitch)
 void JuicyClouds::calculateSamplesPerStep()
 {
 	m_samplesPerSpawn = (m_sampleRate * 60.0f / *m_bpm) / *m_division;
-	DBG(m_samplesPerSpawn);
+	//DBG(m_samplesPerSpawn);
 }
 
 void JuicyClouds::setBPM(float bpm)

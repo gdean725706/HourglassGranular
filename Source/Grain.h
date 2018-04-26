@@ -34,6 +34,7 @@ class Grain
 	float m_startPosition, m_currentOutput, m_gain, m_blendAmount;
 	float m_panning;
 	float m_pitch;
+	float m_rPitch;
 
 	WindowShapes m_windows;
 
@@ -50,7 +51,8 @@ public:
 		m_gain(0.3f),
 		m_blendAmount(0.0f),
 		m_panning(0.5f),
-		m_pitch(1.0f)
+		m_pitch(1.0f),
+		m_rPitch(0.0f)
 	{
 		m_hannWindow = 0;
 		m_triWindow = 0;
@@ -89,7 +91,9 @@ public:
 		float rPitch = rng * randomPitch;
 		m_panning = rng * panningRandomness;
 		
-		m_pitch = pitch + rPitch;
+		m_rPitch = rPitch;
+
+		//m_pitch = pitch + rPitch;
 		m_phasor.setFrequency(m_pitch);
 
 		if (audio != nullptr && hann != nullptr)
@@ -128,7 +132,7 @@ public:
 
 	void updatePitch(float p)
 	{
-		m_pitch = p;
+		m_pitch = p + m_rPitch;
 		m_phasor.setFrequency(m_pitch);
 	}
 

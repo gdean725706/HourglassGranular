@@ -48,7 +48,7 @@ public:
 	JuicyClouds(AudioProcessorValueTreeState& parameters, float sampleRate = 44100.0f);
 	void setSampleRate(float samplerate);
 
-	void process(float* leftChannel, float* rightChannel, int blockSize);
+	void process(float* leftChannel, float* rightChannel, int blockSize, AudioPlayHead* playhead);
 
 	void setPlayState(bool state);
 
