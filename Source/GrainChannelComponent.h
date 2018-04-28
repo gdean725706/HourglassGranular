@@ -352,7 +352,7 @@ public:
 	{
 		if (m_grainProcessor == 0) return;
 
-		m_grainProcessor->setPlayState(false);
+		m_grainProcessor->setPlayState(true);
 
 		//do loading...
 

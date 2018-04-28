@@ -12,7 +12,8 @@
               pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0" pluginAUExportPrefix="HourglassGranularAU"
               pluginRTASCategory="" aaxIdentifier="com.point3dsp.HourglassGranular"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.1.2"
-              companyName="Point3dsp">
+              companyName="Point3dsp" companyEmail="up725706@myport.ac.uk"
+              companyWebsite="www.soundcloud.com/point3music">
   <MAINGROUP id="YfQrpo" name="HourglassGranular">
     <GROUP id="{773F1AFC-5E5D-8FDE-533E-5A8BFAA76DD6}" name="Source">
       <GROUP id="{9EB83F55-9703-7AFA-2D2B-E0DB56F4459D}" name="Audio">
