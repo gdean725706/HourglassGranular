@@ -8,7 +8,7 @@ Hourglass is a granular synthesis engine capable of manipulating audio samples t
 ## Installation
 This application runs in both Standalone executable and VST Plugin format.
 
-Downloadable binaries can be found in the releases folder, or you can build it yourself for your target platform.
+Downloadable binaries can be found in releases, or you can build it yourself for your target platform.
 
 ### VST:
 Copy the .dll into your VSTPlugins folder.
