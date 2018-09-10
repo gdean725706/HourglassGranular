@@ -79,3 +79,5 @@ Loaded sample file location paths are saved but the audio files are not. A messa
 In standalone mode, audio and MIDI settings can be accessed via the options menu in the top left.
 
 The plugin will automatically assume audio & MIDI settings from the host.
+
+UI design inspired by [ValhallaDSP](https://valhalladsp.com/)
