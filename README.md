@@ -4,8 +4,11 @@
 ![hourglass_img](https://i.imgur.com/dTnnzjO.png)
 
 Hourglass is a granular synthesis engine capable of manipulating audio samples to produce a wide range of unique and distinctive timbres ranging from harsh, transient percussion to rich, evolving textures. 
+
 A minimal yet powerful interface enables users to explore sounds quickly and efficiently, offering a balance between ease of use and depth of control.
+
 An internal metronome allows grains to be spawned rhythmically at regular intervals, a feature targeted towards live musicians in a performance context.
+
 Platform agnostic saving and loading plus DAW automation support allows hourglass to fit in with any musician’s plugin arsenal.
 
 ## Installation
